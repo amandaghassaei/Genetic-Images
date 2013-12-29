@@ -2,6 +2,7 @@ class Population{
   
   Individual[] populationList = new Individual[populationSize];
   boolean matchFound = false;//once we've found a match, set this to true
+  String matchGen = "no matches found";//record the gen number where match was found
   int iterBestFitness;//the best fitness for one iteration
   Individual iterBestIndividual;
   
@@ -31,7 +32,8 @@ class Population{
         iterBestIndividual = individual;
       }
       if (fitness==totalNumGenes){//if we find a match
-        println("match found, gen = "+ generation);
+        matchGen = generation + " generations";
+        println(geneMutationRate + "," + populationSize + "," + generation);
         matchFound = true;
       }
       for (int i=0;i<fitness;i++){
