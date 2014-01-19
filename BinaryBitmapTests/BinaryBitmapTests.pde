@@ -1,25 +1,27 @@
 //binary bitmap test
 
-int imgHeight = 7;//px height of individual
-int imgWidth = 7;//px width of individual
+int imgHeight = 101;//px height of individual
+int imgWidth = 101;//px width of individual
 int totalNumGenes = imgWidth*imgHeight;
 
-int populationSize = 50;//number of individuals in a population
+int populationSize = 10;//number of individuals in a population (keep this even to keep it simple)
 int generation = 0;//generation number
-int maxGens = 5000;//manually shut down sketch after we hit this many iterations and still no match
+int maxGens = 0;//manually shut down sketch after we hit this many iterations and still no match (set to 0 to never stop)
+int saveImgAtIncrement = 100;//how often we should save an image for the movie (number of generations)
 
-float geneMutationRate = 0.005gene;//change the value of a pixel
+float geneMutationRate = 0.01;//change the value of a pixel
 float crossoverRate = 1.0;//rate of crossover reproduction vs cloning
+boolean hillClimb = true;
 
 //run multiple trials at once
-int trialsCol = 4;//how many columns of trials
-int trialsRow = 3;//how many rows
+int trialsCol = 1;//how many columns of trials
+int trialsRow = 1;//how many rows
 int trialsSpacing = 3;//px spacing between trials in output img
 int numTrials = trialsCol*trialsRow;
 Population[] populations = new Population[numTrials];
 
 PImage image;//storage for rendering
-String imgName = "bitmap";
+String imgName = "bitmap"+"_pop"+populationSize+"_mut"+geneMutationRate+"_cross"+crossoverRate;
 
 void setup() {
   size(imgWidth*trialsCol+trialsSpacing*(trialsCol-1),imgHeight*trialsRow+trialsSpacing*(trialsRow-1));
@@ -40,9 +42,11 @@ void draw(){
       image(image,(i%trialsCol)*(imgWidth+trialsSpacing),(i/trialsCol)*(imgHeight+trialsSpacing));
     }
   }
-  saveFrame(imgName+"_pop"+populationSize+"_mut"+geneMutationRate+"/gen-#####.tif");
+  if (generation%saveImgAtIncrement==0){
+    saveFrame(imgName+"/gen-#####.tif");
+  }
   generation++;
-  if (allMatchesFound() || generation>maxGens) {
+  if (allMatchesFound() || generation>maxGens && maxGens!=0) {
     drawResultsFrame();
     exit();
   }
@@ -73,7 +77,7 @@ void drawResultsFrame(){
     textAlign(CENTER);
     text(populations[i].matchGen, ((i%trialsCol)*(imgWidth+trialsSpacing)+float(imgWidth)/2)*movScale-imgWidth*movScale/2,((i/trialsCol)*(imgHeight+trialsSpacing-1/2)+float(imgHeight)/2)*movScale-40, imgWidth*movScale, 80);  
   }
-  saveFrame(imgName+"_pop"+populationSize+"_mut"+geneMutationRate+"/gen-#####.tif");
+  saveFrame(imgName+"/gen-#####.tif");
 }
 
 void keyPressed() {

@@ -39,30 +39,42 @@ class Individual {//an individual stores information for several genes
     return fitness;    
   }
   
-  Individual crossover(Individual mate){
-    int[] childGenes = new int[totalNumGenes];
-    int crossoverPoint = int(random(totalNumGenes));
+  Individual[] crossover(Individual mate){
+    int[] child1Genes = new int[totalNumGenes];
+    int[] child2Genes = new int[totalNumGenes];
     for (int i=0;i<totalNumGenes;i++){
-      if (i<crossoverPoint){
-        childGenes[i] = genes[i];
+      if (random(1)<0.5){
+        child1Genes[i] = genes[i];
+        child2Genes[i] = mate.genes[i];
       } else {
-        childGenes[i] = mate.genes[i];
+        child1Genes[i] = mate.genes[i];
+        child2Genes[i] = genes[i];
       }
     }
-    Individual child = new Individual(childGenes);
-    return child;
+    Individual[] children = new Individual[2];
+    children[0] = new Individual(child1Genes);
+    children[1] = new Individual(child2Genes);
+    return children;
   }
   
-  void mutate(){
+  Individual mutate(){
     for (int i=0;i<totalNumGenes;i++){
       if (random(1)<geneMutationRate){//gene replacement
         genes[i] = pickRandomGene();
       }
     }
+    return this;
   }
   
   int pickRandomGene(){
     if (int(random(2))<1) return 255;
     return 0;
+  }
+  
+  Individual makeCopy(){
+    int[] genesCopy = new int[totalNumGenes];
+    arrayCopy(genes, genesCopy);
+    return new Individual(genesCopy);
+    
   }
 }

@@ -14,12 +14,36 @@ class Population{
   
   void iter() {//perform fitness test on all indivduals and create the next generation
     iterBestFitness=0;
-    ArrayList<Individual> matingPool = createMatingPool(populationList);
     Individual[] nextGeneration = new Individual[populationSize];
-    for (int i=0;i<populationSize;i++){
-      Individual individual = reproduce(matingPool);
-      nextGeneration[i] = individual;
+    if (hillClimb){
+      for (int i=0;i<populationSize;i++){
+        Individual parent = populationList[i];
+        Individual mutant = parent.makeCopy().mutate();
+        int mutantFitness = mutant.getFitness();
+        int parentFitness = parent.getFitness();
+        if (mutantFitness>iterBestFitness){
+          iterBestFitness = mutantFitness;
+          iterBestIndividual = mutant;
+        }
+        if (parentFitness>iterBestFitness){
+          iterBestFitness = parentFitness;
+          iterBestIndividual = parent;
+        }
+        if (mutantFitness>parentFitness){
+          nextGeneration[i] = mutant;
+        } else {
+          nextGeneration[i] = parent;
+        }
+      }
+    } else {
+      ArrayList<Individual> matingPool = createMatingPool(populationList);
+      for (int i=0;i<populationSize/2;i++){
+        Individual[] children = reproduce(matingPool);
+        nextGeneration[i] = children[0];
+        nextGeneration[i+1] = children[1];
+      }
     }
+    println(iterBestFitness);
     arrayCopy(nextGeneration, populationList);
   }
   
@@ -32,6 +56,7 @@ class Population{
         iterBestIndividual = individual;
       }
       if (fitness==totalNumGenes){//if we find a match
+        iterBestIndividual = individual;
         matchGen = generation + " generations";
         println(geneMutationRate + "," + populationSize + "," + generation);
         matchFound = true;
@@ -43,17 +68,19 @@ class Population{
     return matingPool;
   }
   
-  Individual reproduce(ArrayList<Individual> matingPool){
+  Individual[] reproduce(ArrayList<Individual> matingPool){
     int poolSize = matingPool.size();
-    Individual child;
+    Individual[] children = new Individual[2];
     Individual parent1 = matingPool.get(int(random(poolSize)));
+    Individual parent2 = matingPool.get(int(random(poolSize)));
     if (random(1)<crossoverRate){//crossover
-      Individual parent2 = matingPool.get(int(random(poolSize)));
-      child = parent1.crossover(parent2);
+      children = parent1.crossover(parent2);
     } else {//clone
-      child = new Individual(parent1.genes);
+      children[0] = new Individual(parent1.genes);
+      children[1] = new Individual(parent2.genes);
     }
-    child.mutate();
-    return child;
+    children[0].mutate();
+    children[1].mutate();
+    return children;
   }
 }
