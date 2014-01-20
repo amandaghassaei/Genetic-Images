@@ -1,10 +1,10 @@
 //binary bitmap test
 
-int imgHeight = 101;//px height of individual
-int imgWidth = 101;//px width of individual
+int imgHeight = 51;//px height of individual
+int imgWidth = 51;//px width of individual
 int totalNumGenes = imgWidth*imgHeight;
 
-int populationSize = 10;//number of individuals in a population (keep this even to keep it simple)
+int populationSize = 1;//number of individuals in a population (keep this even to keep it simple)
 int generation = 0;//generation number
 int maxGens = 0;//manually shut down sketch after we hit this many iterations and still no match (set to 0 to never stop)
 int saveImgAtIncrement = 100;//how often we should save an image for the movie (number of generations)
@@ -43,7 +43,7 @@ void draw(){
     }
   }
   if (generation%saveImgAtIncrement==0){
-    saveFrame(imgName+"/gen-#####.tif");
+    saveFrame(imgName+"/gen-##########.tif");
   }
   generation++;
   if (allMatchesFound() || generation>maxGens && maxGens!=0) {

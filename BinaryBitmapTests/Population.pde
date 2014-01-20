@@ -21,18 +21,14 @@ class Population{
         Individual mutant = parent.makeCopy().mutate();
         int mutantFitness = mutant.getFitness();
         int parentFitness = parent.getFitness();
-        if (mutantFitness>iterBestFitness){
-          iterBestFitness = mutantFitness;
-          iterBestIndividual = mutant;
-        }
-        if (parentFitness>iterBestFitness){
-          iterBestFitness = parentFitness;
-          iterBestIndividual = parent;
-        }
         if (mutantFitness>parentFitness){
           nextGeneration[i] = mutant;
+          iterBestFitness = mutantFitness;
+          iterBestIndividual = mutant;
         } else {
           nextGeneration[i] = parent;
+          iterBestFitness = parentFitness;
+          iterBestIndividual = parent;
         }
       }
     } else {
@@ -76,8 +72,8 @@ class Population{
     if (random(1)<crossoverRate){//crossover
       children = parent1.crossover(parent2);
     } else {//clone
-      children[0] = new Individual(parent1.genes);
-      children[1] = new Individual(parent2.genes);
+      children[0] = parent1.makeCopy();
+      children[1] = parent2.makeCopy();
     }
     children[0].mutate();
     children[1].mutate();
