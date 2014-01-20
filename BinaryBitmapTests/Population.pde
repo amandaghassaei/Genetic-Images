@@ -17,19 +17,9 @@ class Population{
     Individual[] nextGeneration = new Individual[populationSize];
     if (hillClimb){
       for (int i=0;i<populationSize;i++){
-        Individual parent = populationList[i];
-        Individual mutant = parent.makeCopy().mutate();
-        int mutantFitness = mutant.getFitness();
-        int parentFitness = parent.getFitness();
-        if (mutantFitness>parentFitness){
-          nextGeneration[i] = mutant;
-          iterBestFitness = mutantFitness;
-          iterBestIndividual = mutant;
-        } else {
-          nextGeneration[i] = parent;
-          iterBestFitness = parentFitness;
-          iterBestIndividual = parent;
-        }
+        iterBestIndividual = hillClimb(i);
+        iterBestFitness = iterBestIndividual.getFitness();
+        nextGeneration[i] = iterBestIndividual;
       }
     } else {
       ArrayList<Individual> matingPool = createMatingPool(populationList);
@@ -41,6 +31,15 @@ class Population{
     }
     println(iterBestFitness);
     arrayCopy(nextGeneration, populationList);
+  }
+  
+  Individual hillClimb(int i){
+      Individual parent = populationList[i];
+      Individual mutant = parent.makeCopy().mutate();
+      if (mutant.getFitness()>parent.getFitness()){
+        return mutant;
+      }
+      return parent;
   }
   
   ArrayList<Individual> createMatingPool(Individual[] currentPopulation){
