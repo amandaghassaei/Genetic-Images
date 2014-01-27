@@ -84,4 +84,10 @@ void keyPressed() {
   if (key=='q'){//manually quit
     generation = maxGens;
   }
+  if (key=='p'){//pause
+    noLoop();
+  }
+  if (key=='r'){//resume
+    loop();
+  }
 }
