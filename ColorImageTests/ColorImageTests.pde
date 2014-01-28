@@ -1,10 +1,12 @@
 
-
+import processing.pdf.*;
 
 boolean hillClimb = true;
 int numPlataeu = 500;//number of generations w/o a new best match before we add another gene into the mix
 int stagGenNum = numPlataeu;//number of generations since a child was more fit than parent
 boolean stableGeneAdded = true;
+
+float maxDeviation;
 
 int opacity = 70;
 
@@ -45,6 +47,12 @@ void setup(){
   size(image.width,image.height);
   noStroke();
   
+  //set baseline for worst fitness
+  Gene[] noGenes = new Gene[0];
+  Individual worstIndividual = new Individual(noGenes);
+  maxDeviation = worstIndividual.calculateRawFitness();
+  println(maxDeviation);
+  
   population = new Population();
 }
 
@@ -71,6 +79,9 @@ void keyPressed() {
   if (key=='r'){//resume
     loop();
   }
+  if (key=='s'){//save
+    population.populationList[0].printPolygons();
+  }
 }
 
 void printStats() {
@@ -79,5 +90,7 @@ void printStats() {
   print("  poly = ");
   print(currentNumGenes);
   print("  stag = ");
-  println(stagGenNum);
+  print(stagGenNum);
+  print("  fit = ");
+  println(population.populationList[0].getFitness());
 }

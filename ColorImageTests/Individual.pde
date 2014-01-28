@@ -5,6 +5,7 @@ class Individual {//an individual stores information for several genes
   
   Individual(){
     for (int i=0;i<currentNumGenes;i++){
+      println("here");
       genes[i] = new Gene();
     }
   }
@@ -26,28 +27,34 @@ class Individual {//an individual stores information for several genes
     }
   }
   
+  void printPolygons(){//save all polygons to PDF
+    beginRecord(PDF, "gen"+generation+".pdf");
+    render(); 
+    endRecord();
+  }
+  
   float getFitness() {
     if (fitness!=-1) return fitness;//don't calculate fitness twice
-    render();
-    int fitnessCalc = 0;
-    for (int i=0;i<sampleHeightRes;i++) {
-      for (int j=0;j<sampleWidthRes;j++) {
-        color newColor = get(int((j+0.5)*numPixelsToSkip), int((i+0.5)*numPixelsToSkip));
-        fitnessCalc += colorDistance(smallImage.pixels[j+i*sampleWidthRes], newColor);//standard deviation of LAB pixel by pixel http://en.wikipedia.org/wiki/Color_difference
-      }
-    }
-    float scaledFitness = scaleFitness(fitnessCalc);
+    float scaledFitness = scaleFitness(calculateRawFitness());
     fitness = scaledFitness;
     return scaledFitness;    
   }
   
-  float scaleFitness(float totalColorDistance){
-    float maxDeviation = 800000;//anything worse than this will not pass on its genes to the next generation
-    float scaledNum = maxDeviation-totalColorDistance;
-    if (scaledNum < 0){
-      return 0;
+  float calculateRawFitness(){
+    render();
+    int rawFitness = 0;
+    for (int i=0;i<sampleHeightRes;i++) {
+      for (int j=0;j<sampleWidthRes;j++) {
+        color newColor = get(int((j+0.5)*numPixelsToSkip), int((i+0.5)*numPixelsToSkip));
+        rawFitness += colorDistance(smallImage.pixels[j+i*sampleWidthRes], newColor);//standard deviation of LAB pixel by pixel http://en.wikipedia.org/wiki/Color_difference
+      }
     }
-    scaledNum = scaledNum*100/maxDeviation;
+    return rawFitness;
+  }
+  
+  float scaleFitness(float totalColorDistance){
+    float scaledNum = maxDeviation-totalColorDistance;
+    scaledNum = constrain(scaledNum*100/maxDeviation, 0, 100);
     return scaledNum;
   }
   
@@ -66,6 +73,7 @@ class Individual {//an individual stores information for several genes
   Individual mutate(boolean forceMutation){//forceMutation ensures that at least one mutation happens (need this for hill climbing)
     boolean mutationHasOccurred = false;
     while (!mutationHasOccurred && forceMutation){
+      if (genes.length==0) return this;
       for (Gene gene : genes){
         mutationHasOccurred = gene.mutate();
       }
