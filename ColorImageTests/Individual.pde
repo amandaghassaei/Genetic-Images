@@ -29,6 +29,7 @@ class Individual {//an individual stores information for several genes
   
   void printPolygons(){//save all polygons to PDF
     beginRecord(PDF, "gen"+generation+".pdf");
+    noStroke();
     render(); 
     endRecord();
   }
@@ -53,9 +54,9 @@ class Individual {//an individual stores information for several genes
   }
   
   float scaleFitness(float totalColorDistance){
-    float scaledNum = maxDeviation-totalColorDistance;
-    scaledNum = constrain(scaledNum*100/maxDeviation, 0, 100);
-    return scaledNum;
+    float diff = maxColorDeviation-totalColorDistance;
+    if (diff<0) return 0;
+    return diff*100/maxColorDeviation;
   }
   
   Individual crossover(Individual mate){
@@ -71,9 +72,9 @@ class Individual {//an individual stores information for several genes
   }
   
   Individual mutate(boolean forceMutation){//forceMutation ensures that at least one mutation happens (need this for hill climbing)
+    if (genes.length==0) return this;
     boolean mutationHasOccurred = false;
     while (!mutationHasOccurred && forceMutation){
-      if (genes.length==0) return this;
       for (Gene gene : genes){
         mutationHasOccurred = gene.mutate();
       }

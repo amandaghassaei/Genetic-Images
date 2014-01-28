@@ -29,14 +29,12 @@ class Population{
   Individual hillClimb(Individual parent){
       Individual mutant = parent.copy().mutate(true);
       if (mutant.getFitness()>parent.getFitness()){
-        stableGeneAdded = true;
         stagGenNum = 0;
         return mutant;
       }
-      if ((stagGenNum++ > numPlataeu) && stableGeneAdded){
+      if ((stagGenNum++ > numPlateau) && parent.genes.length==currentNumGenes){
         currentNumGenes++;
         stagGenNum = 0;
-        stableGeneAdded = false;
       }
       return parent;
   }

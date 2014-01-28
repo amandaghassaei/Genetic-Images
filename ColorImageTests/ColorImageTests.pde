@@ -2,11 +2,10 @@
 import processing.pdf.*;
 
 boolean hillClimb = true;
-int numPlataeu = 500;//number of generations w/o a new best match before we add another gene into the mix
-int stagGenNum = numPlataeu;//number of generations since a child was more fit than parent
-boolean stableGeneAdded = true;
+int numPlateau = 500;//number of generations w/o a new best match before we add another gene into the mix
+int stagGenNum = 0;//number of generations since a child was more fit than parent
 
-float maxDeviation;
+float maxColorDeviation;//baseline for worst fitness
 
 int opacity = 70;
 
@@ -50,8 +49,11 @@ void setup(){
   //set baseline for worst fitness
   Gene[] noGenes = new Gene[0];
   Individual worstIndividual = new Individual(noGenes);
-  maxDeviation = worstIndividual.calculateRawFitness();
-  println(maxDeviation);
+  maxColorDeviation = worstIndividual.calculateRawFitness();
+  
+  if (currentNumGenes==0){
+    stagGenNum = numPlateau;
+  }
   
   population = new Population();
 }
