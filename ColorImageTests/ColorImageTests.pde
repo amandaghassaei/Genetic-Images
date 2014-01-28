@@ -1,23 +1,22 @@
 
+
+
 boolean hillClimb = true;
-int stagGenNum = 0;//number of generations since a child was more fit than parent
 int numPlataeu = 500;//number of generations w/o a new best match before we add another gene into the mix
-boolean stableGeneAdded = false;
+int stagGenNum = numPlataeu;//number of generations since a child was more fit than parent
+boolean stableGeneAdded = true;
 
-float crossoverRate = 1.0;//rate of crossover reproduction vs cloning
+int opacity = 70;
 
-int opacity = 30;
+int currentNumGenes = 0;
 int totalNumGenes = 1;
-int currentNumGenes = 1;
 
-float geneColorMutationRate = 0.01;
-float colorTol = 10;
-float geneCoordMutationRate = 0.01;
-float coordMutationDistance = 50;
-
-int populationSize = 1;//number of individuals in a population (keep this even to keep it simple)
 int generation = 0;//generation number
 int maxGens = 0;//manually shut down sketch after we hit this many iterations and still no match (set to 0 to never stop)
+
+float crossoverRate = 1.0;//rate of crossover reproduction vs cloning
+int populationSize = 1;//number of individuals in a population (keep this even to keep it simple)
+
 boolean shouldSave = false;
 int saveImgAtIncrement = 100;//how often we should save an image for the movie (number of generations)
 
@@ -27,7 +26,7 @@ PImage image;//storage for image
 PImage smallImage;
 
 //amount of pixels to sample
-int numPixelsToSkip = 10;//ex when = 10, we only test against the input image for one pixel in every 10x10px region
+int numPixelsToSkip = 1;//ex when = 10, we only test against the input image for one pixel in every 10x10px region
 int sampleWidthRes;
 int sampleHeightRes;
 
