@@ -1,16 +1,18 @@
 
 import processing.pdf.*;
 
-//hillclimb
+//image to match:
+String fileName = "teddy";
+
+//hillclimb variables
 boolean hillClimb = true;
 int numPlateau = 250;//number of generations w/o a new best match before we add another gene into the mix
 
+//global variablesq
 int currentNumGenes = 0;//starting # genes per individual
 int totalNumGenes = 1;//max number of genes (set to 0 for no max)
-int maxGenerationss = 1000000;//manually shut down sketch after we hit this many iterations (set to 0 to never stop searching)
-
+int maxGenerations = 1000000;//manually shut down sketch after we hit this many iterations (set to 0 to never stop searching)
 int populationSize = 1;//number of individuals in a population (keep this even to keep it simple)
-String fileName = "teddy";
 
 //storage globals
 Population population = new Population();//storage for individuals
@@ -52,7 +54,8 @@ void draw(){
 
 void keyPressed() {
   if (key=='q'){//manually quit
-    generation = maxGenerations;
+    saver.doSave(population.populationList[0]);
+    exit();
   }
   if (key=='p'){//pause
     noLoop();

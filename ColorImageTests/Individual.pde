@@ -46,7 +46,7 @@ class Individual {//an individual stores information for several genes
     int rawFitness = 0;
     for (int i=0;i<height;i++) {
       for (int j=0;j<width;j++) {
-        color newColor = get(j+0.5,i+0.5);
+        color newColor = get(j,i);
         rawFitness += colorDistance(image.pixels[j+i*width], newColor);//pythagorean distance in RGB color space (LAB takes too much time)
       }
     }

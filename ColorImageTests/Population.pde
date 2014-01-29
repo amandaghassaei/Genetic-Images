@@ -2,7 +2,11 @@ class Population{
   
   Individual[] populationList = new Individual[populationSize];
   Individual iterBestIndividual;
+  
+  //hill climbing variables
   int stagGenNum = 0;//number of generations since a child was more fit than parent
+  
+  //genetic variables
   float crossoverRate = 1.0;//rate of crossover reproduction vs cloning
   
   Population(){

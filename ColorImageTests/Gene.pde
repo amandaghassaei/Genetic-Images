@@ -62,4 +62,8 @@ class Gene {//a gene specifies a shape and a color
   Gene copy(){
     return new Gene(geneColor, corners);
   }
+  
+  color colorFromIntArray(int[] colorArray){
+    return (opacity<<24) | (colorArray[0]<<16) | (colorArray[1]<<8) | (colorArray[2]);
+  }
 }
