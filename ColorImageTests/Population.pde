@@ -2,11 +2,17 @@ class Population{
   
   Individual[] populationList = new Individual[populationSize];
   Individual iterBestIndividual;
+  int stagGenNum = 0;//number of generations since a child was more fit than parent
+  float crossoverRate = 1.0;//rate of crossover reproduction vs cloning
   
   Population(){
     for (int i=0;i<populationSize;i++){//initialize random individuals
       populationList[i] = new Individual();
       iterBestIndividual = populationList[0];//initialize something as iterBestIndividual to start
+    }
+    
+    if (currentNumGenes==0){//if we're starting with no genes, we want to add a new one asap
+      stagGenNum = numPlateau;
     }
   }
   
@@ -27,7 +33,13 @@ class Population{
   }
   
   Individual hillClimb(Individual parent){
-      Individual mutant = parent.copy().mutate(true);
+      boolean mutateLastGeneOnly;
+      if (currentNumGenes>parent.genes.length){
+        mutateLastGeneOnly = true;
+      } else {
+        mutateLastGeneOnly = false;
+      }
+      Individual mutant = parent.copy().mutate(true, mutateLastGeneOnly);
       if (mutant.getFitness()>parent.getFitness()){
         stagGenNum = 0;
         return mutant;
@@ -59,9 +71,9 @@ class Population{
     Individual parent1 = matingPool.get(int(random(poolSize)));
     if (random(1)<crossoverRate){//crossover
       Individual parent2 = matingPool.get(int(random(poolSize)));
-      return parent1.crossover(parent2).mutate(false);
+      return parent1.crossover(parent2).mutate(false, false);
     } else {//clone
-      return parent1.copy().mutate(false);
+      return parent1.copy().mutate(false, false);
     }
   }
 }

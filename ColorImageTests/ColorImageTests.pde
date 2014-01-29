@@ -1,47 +1,29 @@
 
 import processing.pdf.*;
 
+//hillclimb
 boolean hillClimb = true;
-int numPlateau = 500;//number of generations w/o a new best match before we add another gene into the mix
-int stagGenNum = 0;//number of generations since a child was more fit than parent
+int numPlateau = 250;//number of generations w/o a new best match before we add another gene into the mix
 
-float maxColorDeviation;//baseline for worst fitness
+int currentNumGenes = 0;//starting # genes per individual
+int totalNumGenes = 1;//max number of genes (set to 0 for no max)
+int maxGenerationss = 1000000;//manually shut down sketch after we hit this many iterations (set to 0 to never stop searching)
 
-int opacity = 70;
-
-int currentNumGenes = 0;
-int totalNumGenes = 1;
-
-int generation = 0;//generation number
-int maxGens = 0;//manually shut down sketch after we hit this many iterations and still no match (set to 0 to never stop)
-
-float crossoverRate = 1.0;//rate of crossover reproduction vs cloning
 int populationSize = 1;//number of individuals in a population (keep this even to keep it simple)
+String fileName = "teddy";
 
-boolean shouldSave = false;
-int saveImgAtIncrement = 100;//how often we should save an image for the movie (number of generations)
-
-//image storage
-String imageName = "amanda.jpg";
+//storage globals
+Population population = new Population();//storage for individuals
+Saver saver = new Saver();//keeps track of when to save
+int generation = 0;//generation number
+String imageName = fileName + ".jpg";
 PImage image;//storage for image
-PImage smallImage;
-
-//amount of pixels to sample
-int numPixelsToSkip = 1;//ex when = 10, we only test against the input image for one pixel in every 10x10px region
-int sampleWidthRes;
-int sampleHeightRes;
-
-Population population;//storage
+float maxColorDeviation;//baseline for worst fitness (calculated in setup)
 
 void setup(){
-  image = loadImage(imageName);
-  sampleWidthRes = int(image.width/numPixelsToSkip);
-  sampleHeightRes = int(image.height/numPixelsToSkip);
   
-  //downsampled version
-  smallImage = loadImage(imageName);
-  smallImage.resize(sampleWidthRes, sampleHeightRes);
-  smallImage.loadPixels();
+  image = loadImage(imageName);
+  image.loadPixels();
   
   size(image.width,image.height);
   noStroke();
@@ -50,30 +32,27 @@ void setup(){
   Gene[] noGenes = new Gene[0];
   Individual worstIndividual = new Individual(noGenes);
   maxColorDeviation = worstIndividual.calculateRawFitness();
-  
-  if (currentNumGenes==0){
-    stagGenNum = numPlateau;
-  }
-  
-  population = new Population();
 }
 
 void draw(){
+  
   population.iter();
-//  
-  if (shouldSave && generation%saveImgAtIncrement==0){
-////    saveFrame(imgName+"/gen-##########.tif");
-  }
-  generation++;
   printStats();
-  if (generation>maxGens && maxGens!=0) {
+  
+  if (saver.shouldSave && saver.needsSave(generation)){
+    saver.doSave(population.populationList[0]);
+  }
+  if (generation>maxGenerations && maxGenerations!=0) {
+    saver.doSave(population.populationList[0]);
     exit();
   }
+  
+  generation++;
 }
 
 void keyPressed() {
   if (key=='q'){//manually quit
-    generation = maxGens;
+    generation = maxGenerations;
   }
   if (key=='p'){//pause
     noLoop();
@@ -82,7 +61,7 @@ void keyPressed() {
     loop();
   }
   if (key=='s'){//save
-    population.populationList[0].printPolygons();
+    saver.doSave(population.populationList[0]);
   }
 }
 
@@ -92,7 +71,7 @@ void printStats() {
   print("  poly = ");
   print(currentNumGenes);
   print("  stag = ");
-  print(stagGenNum);
+  print(population.stagGenNum);
   print("  fit = ");
   println(population.populationList[0].getFitness());
 }

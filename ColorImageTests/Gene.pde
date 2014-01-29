@@ -1,7 +1,7 @@
 class Gene {//a gene specifies a shape and a color
 
   color geneColor;
-  int numCorners = 3;
+  int numCorners = 3;//all genes are triangles
   PVector[] corners = new PVector[numCorners];
   int opacity = 50;
   

@@ -28,7 +28,7 @@ class Individual {//an individual stores information for several genes
   }
   
   void printPolygons(){//save all polygons to PDF
-    beginRecord(PDF, "gen"+generation+".pdf");
+    beginRecord(PDF, fileName+"_gen"+generation+".pdf");
     noStroke();
     render(); 
     endRecord();
@@ -44,10 +44,10 @@ class Individual {//an individual stores information for several genes
   float calculateRawFitness(){
     render();
     int rawFitness = 0;
-    for (int i=0;i<sampleHeightRes;i++) {
-      for (int j=0;j<sampleWidthRes;j++) {
-        color newColor = get(int((j+0.5)*numPixelsToSkip), int((i+0.5)*numPixelsToSkip));
-        rawFitness += colorDistance(smallImage.pixels[j+i*sampleWidthRes], newColor);//standard deviation of LAB pixel by pixel http://en.wikipedia.org/wiki/Color_difference
+    for (int i=0;i<height;i++) {
+      for (int j=0;j<width;j++) {
+        color newColor = get(j+0.5,i+0.5);
+        rawFitness += colorDistance(image.pixels[j+i*width], newColor);//pythagorean distance in RGB color space (LAB takes too much time)
       }
     }
     return rawFitness;
@@ -71,12 +71,16 @@ class Individual {//an individual stores information for several genes
     return new Individual(childGenes);
   }
   
-  Individual mutate(boolean forceMutation){//forceMutation ensures that at least one mutation happens (need this for hill climbing)
+  Individual mutate(boolean forceMutation, boolean lastGeneMut){//forceMutation ensures that at least one mutation happens (need this for hill climbing)
     if (genes.length==0) return this;
     boolean mutationHasOccurred = false;
     while (!mutationHasOccurred && forceMutation){
-      for (Gene gene : genes){
-        mutationHasOccurred = gene.mutate();
+      if (lastGeneMut) {
+        mutationHasOccurred = genes[genes.length-1].mutate();
+      } else {
+        for (Gene gene : genes){
+          mutationHasOccurred = gene.mutate();
+        }
       }
     }
     return this;
