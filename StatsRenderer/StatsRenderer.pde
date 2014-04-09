@@ -14,6 +14,10 @@ int hInset = 70;
 //opacity of plots (for comparisons)
 int opacity = 170;
 
+//scale for axes
+boolean logX = false;
+boolean logY = true;
+
 void setup() {
   
   size(1000, 700);
@@ -46,18 +50,40 @@ void drawAxes(){
   strokeWeight(2);
   line(hInset, vInset, hInset, height-vInset);
   textAlign(RIGHT);
-  for (int i=0;i<5;i++){
-    line(hInset, vInset+i*(height-2*vInset)/5, hInset-tickLength, vInset+i*(height-2*vInset)/5);
-    text((5-i)*20+"%", hInset-tickLength-txtOffset, vInset+i*(height-2*vInset)/5+txtSize/2);
+  if (logY){
+    for (int i=0;i<4;i++){
+      line(hInset, vInset+i*(height-2*vInset)/4, hInset-tickLength, vInset+i*(height-2*vInset)/4);
+      String percent = 100-int(pow(100,i/4.0)) +"%";
+      if (i==0) percent = "100%";
+      text(percent, hInset-tickLength-txtOffset, vInset+i*(height-2*vInset)/4+txtSize/2);
+    }
+  } else {
+    for (int i=0;i<5;i++){
+      line(hInset, vInset+i*(height-2*vInset)/5, hInset-tickLength, vInset+i*(height-2*vInset)/5);
+      text((5-i)*20+"%", hInset-tickLength-txtOffset, vInset+i*(height-2*vInset)/5+txtSize/2);
+    }
   }
   textAlign(CENTER);
   line(hInset, height-vInset, width-hInset, height-vInset);
-  for (int i=1;i<=10;i++){
-    line(hInset+i*(width-2*hInset)/10, height-vInset, hInset+i*(width-2*hInset)/10, height-vInset+tickLength);
-    if (i==10) {
-      text("1M", hInset+i*(width-2*hInset)/10, height-vInset+tickLength+txtOffset+txtSize);
-    } else {
-      text(i*100+"K", hInset+i*(width-2*hInset)/10, height-vInset+tickLength+txtOffset+txtSize);
+  if (logX) {
+    for (int i=1;i<=7;i++){
+      line(hInset+i*(width-2*hInset)/7, height-vInset, hInset+i*(width-2*hInset)/7, height-vInset+tickLength);
+      String power = "";
+      if ((i-1)/3 == 1) power = "K";
+      if ((i-1)/3 == 2) power = "M";
+      int val = 1;
+      if ((i-1)%3 == 1) val = 10;
+      if ((i-1)%3 == 2) val = 100;
+      text(val+power, hInset+i*(width-2*hInset)/7, height-vInset+tickLength+txtOffset+txtSize);
+    }
+  } else {
+    for (int i=1;i<=10;i++){
+      line(hInset+i*(width-2*hInset)/10, height-vInset, hInset+i*(width-2*hInset)/10, height-vInset+tickLength);
+      if (i==10) {
+        text("1M", hInset+i*(width-2*hInset)/10, height-vInset+tickLength+txtOffset+txtSize);
+      } else {
+        text(i*100+"K", hInset+i*(width-2*hInset)/10, height-vInset+tickLength+txtOffset+txtSize);
+      }
     }
   }
   
@@ -81,14 +107,46 @@ void render(String filename, color plotColor) {
     if ((max-min)<0.5) {
       stroke(plotColor);
       strokeWeight(2);
-      line(hInset+lastGeneration/1000000*(width-2*hInset),  vInset+(height-2*vInset)*(100-lastMax)/100, hInset+generation/1000000*(width-2*hInset),  vInset+(height-2*vInset)*(100-max)/100);
+      line(hInset+scaleX(lastGeneration)*(width-2*hInset),  vInset+(height-2*vInset)*scaleY(lastMax), hInset+scaleX(generation)*(width-2*hInset),  vInset+(height-2*vInset)*scaleY(max));
       noStroke();
     }
-    vertex(hInset+generation/1000000*(width-2*hInset),  vInset+(height-2*vInset)*(100-max)/100);
-    vertex(hInset+generation/1000000*(width-2*hInset),  vInset+(height-2*vInset)*(100-min)/100);
+    vertex(hInset+scaleX(generation)*(width-2*hInset),  vInset+(height-2*vInset)*scaleY(max));
+    vertex(hInset+scaleX(generation)*(width-2*hInset),  vInset+(height-2*vInset)*scaleY(min));
     lastGeneration = generation;
     lastMax = max;
     lastMin = min;
   }
   endShape();
+}
+
+float scaleX(float x) {
+  if (logX) return scaleToLogX(x);
+  return scaleLinearX(x);
+}
+
+float scaleLinearX(float x) {
+  return x/1000000.0;
+}
+
+float scaleToLogX(float x) {
+  if (x==0) return 0;
+  return (log10(x)+1)/7.0;
+}
+
+float scaleY(float y) {
+  if (logY) return scaleToLogY(y);
+  return scaleLinearY(y);
+}
+
+float scaleLinearY(float y) {
+  return 1-y/100.0;
+}
+
+float scaleToLogY(float y) {
+  if (y==0) return 1;
+  return 1-pow(100, y/100.0)/100.0;
+}
+
+float log10 (float x) {
+  return (log(x) / log(10));
 }

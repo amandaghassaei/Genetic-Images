@@ -64,7 +64,7 @@ class Individual {//an individual stores information for several genes
   
   Individual crossover(Individual mate){
     Gene[] childGenes = new Gene[currentNumGenes];
-    int crossoverPoint = random(genes.length);
+    int crossoverPoint = int(random(genes.length));
     for (int i=0;i<currentNumGenes;i++){
       if (i<crossoverPoint){//single point crossover
         childGenes[i] = genes[i].copy();

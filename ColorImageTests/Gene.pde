@@ -6,10 +6,10 @@ class Gene {//a gene specifies a shape and a color
   int opacity = 50;
   
   //mutation variables
-  float geneColorMutationRate = 0.01;
-  float colorTol = 5;
-  float geneCoordMutationRate = 0.01;
-  float coordMutationDistance = 10;
+  float geneColorMutationRate = 0.05;
+  float colorTol = 20;
+  float geneCoordMutationRate = 0.02;
+  float coordMutationDistance = 30;
   
   Gene() {//init random new gene
     geneColor = color(random(256), random(256), random(256), opacity);//initialize random color

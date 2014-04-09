@@ -54,7 +54,6 @@ void draw(){
     complete();
     exit();
   }
-  
   generation++;
 }
 
