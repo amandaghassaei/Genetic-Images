@@ -5,7 +5,6 @@ class Individual {//an individual stores information for several genes
   
   Individual(){
     for (int i=0;i<currentNumGenes;i++){
-      println("here");
       genes[i] = new Gene();
     }
   }
@@ -65,11 +64,16 @@ class Individual {//an individual stores information for several genes
   
   Individual crossover(Individual mate){
     Gene[] childGenes = new Gene[currentNumGenes];
+    int crossoverPoint = random(genes.length);
     for (int i=0;i<currentNumGenes;i++){
-      if (random(1)<0.5){//uniform crossover
-        childGenes[i] = genes[i];
+      if (i<crossoverPoint){//single point crossover
+        childGenes[i] = genes[i].copy();
       } else {
-        childGenes[i] = mate.genes[i];
+        if (i<mate.genes.length){
+          childGenes[i] = mate.genes[i].copy();
+        } else {
+          childGenes[i] = new Gene();
+        }
       }
     }
     return new Individual(childGenes);
@@ -80,15 +84,16 @@ class Individual {//an individual stores information for several genes
     //lastGeneMut forces a mutation of the last gene only - used when new gene added
     if (genes.length==0) return this;
     boolean mutationHasOccurred = false;
-    while (!mutationHasOccurred && forceMutation){
+    do {
       if (lastGeneMut) {
         mutationHasOccurred = genes[genes.length-1].mutate();
       } else {
         for (Gene gene : genes){
-          mutationHasOccurred = gene.mutate();
+           boolean mutation = gene.mutate();
+           if (mutation) mutationHasOccurred = true;
         }
       }
-    }
+    } while (!mutationHasOccurred || !forceMutation);
     return this;
   }
   

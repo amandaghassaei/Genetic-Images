@@ -13,14 +13,17 @@ class Population{
   Population(){
     for (int i=0;i<populationSize;i++){//initialize random individuals
       populationList[i] = new Individual();
-    }
-    
-    if (currentNumGenes==0){//if we're starting with no genes, we want to add a new one asap
+    } 
+    if (currentNumGenes==0){//if we're starting with no genes, we want to add a new one asap, (but still print one black screen for gen=0 to show where we started)
       stagGenNum = numPlateau;
     }
   }
   
   void iter() {//perform fitness test on all indivduals and create the next generation
+    if (stagGenNum++ > numPlateau){
+      currentNumGenes++;
+      stagGenNum = 0;
+    }
     Individual[] nextGeneration = new Individual[populationSize];
     if (hillClimb){
       for (int i=0;i<populationSize;i++){
@@ -48,10 +51,6 @@ class Population{
       if (mutant.getFitness()>parent.getFitness()){
         stagGenNum = 0;
         return mutant;
-      }
-      if ((stagGenNum++ > numPlateau) && parent.genes.length==currentNumGenes){
-        currentNumGenes++;
-        stagGenNum = 0;
       }
       return parent;
   }
