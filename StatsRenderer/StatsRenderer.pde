@@ -4,8 +4,8 @@ import processing.pdf.*;
 
 //files to render (make sure they are loaded in current directory)
 String file1 = "teddy_stats.txt";
-//String file2 = "file2.txt";
-//String file2 = "file3.txt";
+String file2 = "teddy_stats2.txt";
+String file3 = "teddy_stats3.txt";
 
 //insets for drawing graph
 int vInset = 50;
@@ -26,10 +26,10 @@ void setup() {
    
   color red = color(255, 0, 0, opacity);
   render(file1, red);
-//  color blue = color(0, 0, 255, opacity);
-//  render(file2, blue);
-//  color black = color(0, 0, 0, opacity);
-//  render(file3, black);
+  color blue = color(0, 0, 255, opacity);
+  render(file2, blue);
+  color black = color(0, 0, 0, opacity);
+  render(file3, black);
   
   drawAxes(); 
 
@@ -48,14 +48,14 @@ void drawAxes(){
   fill(0);
   textSize(txtSize);
   strokeWeight(2);
-  line(hInset, vInset, hInset, height-vInset);
+//  line(hInset, vInset, hInset, height-vInset);
   textAlign(RIGHT);
   if (logY){
     for (int i=0;i<4;i++){
       line(hInset, vInset+i*(height-2*vInset)/4, hInset-tickLength, vInset+i*(height-2*vInset)/4);
       String percent = 100-int(pow(100,i/4.0)) +"%";
       if (i==0) percent = "100%";
-      text(percent, hInset-tickLength-txtOffset, vInset+i*(height-2*vInset)/4+txtSize/2);
+      text(percent, hInset-tickLength-txtOffset, vInset+i*(height-2*vInset)/4.0+txtSize/2);
     }
   } else {
     for (int i=0;i<5;i++){
@@ -143,8 +143,9 @@ float scaleLinearY(float y) {
 }
 
 float scaleToLogY(float y) {
+  if (y>99) return 0;
   if (y==0) return 1;
-  return 1-pow(100, y/100.0)/100.0;
+  return (log10(100-y)+1)/4.0;
 }
 
 float log10 (float x) {

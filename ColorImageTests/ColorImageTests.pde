@@ -5,13 +5,13 @@ import processing.pdf.*;
 String fileName = "teddy";
 
 //hillclimb variables
-boolean hillClimb = true;
+boolean hillClimb = false;
 
 //global variablesq
 int currentNumGenes = 0;//starting # genes per individual
 int totalNumGenes = 0;//max number of genes (set to 0 for no max)
 int maxGenerations = 1000000;//manually shut down sketch after we hit this many iterations (set to 0 to never stop searching)
-int populationSize = 1;//number of individuals in a population (keep this even to keep it simple, or if we are doing hillclimb, must set this to 1)
+int populationSize = 10;//number of individuals in a population (keep this even to keep it simple, or if we are doing hillclimb, must set this to 1)
 int numPlateau = 250;//number of generations w/o a new best match before we add another gene into the mix
 
 //storage globals
@@ -22,6 +22,8 @@ int generation = 0;//generation number
 String imageName = fileName + ".jpg";
 PImage image;//storage for image
 float maxColorDeviation;//baseline for worst fitness (calculated in setup), use to scale raw img color deviation into something usable
+
+Individual bestIndividualSoFar = new Individual();
 
 void setup(){
   

@@ -1,10 +1,9 @@
 class Population{
   
   Individual[] populationList = new Individual[populationSize];
-  Individual iterBestIndividual;
-  Individual iterWorstIndividual;
+  Individual iterBestIndividual = new Individual();
+  Individual iterWorstIndividual = new Individual();
   
-  //hill climbing variables
   int stagGenNum = 0;//number of generations since a child was more fit than parent
   
   //genetic variables
@@ -69,9 +68,16 @@ class Population{
       if (fitness<iterWorstIndividual.getFitness()){
         iterWorstIndividual = individual;
       }
+      if (fitness<1) fitness = 1;//get things going
       for (int i=0;i<int(fitness);i++){
         matingPool.add(individual);
       }
+    }
+    if (generation==0) bestIndividualSoFar = iterBestIndividual.copy();
+    if (iterBestIndividual.getFitness()>bestIndividualSoFar.getFitness()){
+      bestIndividualSoFar = iterBestIndividual.copy();
+      println(bestIndividualSoFar.getFitness());
+      stagGenNum = 0;
     }
     return matingPool;
   }
@@ -82,7 +88,8 @@ class Population{
     Individual parent1 = matingPool.get(int(random(poolSize)));
     if (random(1)<crossoverRate){//crossover
       Individual parent2 = matingPool.get(int(random(poolSize)));
-      return parent1.crossover(parent2).mutate(false, false);
+      if (parent1.getFitness()>parent2.getFitness()) return parent1.crossover(parent2).mutate(false, false);
+      return parent2.crossover(parent1).mutate(false, false);
     } else {//clone
       return parent1.copy().mutate(false, false);
     }

@@ -66,7 +66,7 @@ class Individual {//an individual stores information for several genes
     Gene[] childGenes = new Gene[currentNumGenes];
     int crossoverPoint = int(random(genes.length));
     for (int i=0;i<currentNumGenes;i++){
-      if (i<crossoverPoint){//single point crossover
+      if (i<=crossoverPoint && genes.length>i){//single point crossover
         childGenes[i] = genes[i].copy();
       } else {
         if (i<mate.genes.length){
@@ -93,7 +93,7 @@ class Individual {//an individual stores information for several genes
            if (mutation) mutationHasOccurred = true;
         }
       }
-    } while (!mutationHasOccurred || !forceMutation);
+    } while (!mutationHasOccurred && forceMutation);
     return this;
   }
   
