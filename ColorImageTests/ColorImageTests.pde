@@ -16,7 +16,8 @@ int populationSize = 1;//number of individuals in a population (keep this even t
 
 //storage globals
 Population population = new Population();//storage for individuals
-Saver saver = new Saver();//keeps track of when to save
+Saver imgSaver = new Saver();//keeps track of when to save imgs
+StatsSaver statsSaver;//keeps track of when to save stats to txt file
 int generation = 0;//generation number
 String imageName = fileName + ".jpg";
 PImage image;//storage for image
@@ -30,10 +31,12 @@ void setup(){
   size(image.width,image.height);
   noStroke();
   
+  statsSaver = new StatsSaver();//this has to be in setup();
+  
   //set baseline for worst fitness
   Gene[] noGenes = new Gene[0];
-  Individual worstIndividual = new Individual(noGenes);
-  maxColorDeviation = worstIndividual.calculateRawFitness();
+  Individual worstPossibleIndividual = new Individual(noGenes);//all black - no polygons
+  maxColorDeviation = worstPossibleIndividual.calculateRawFitness();
 }
 
 void draw(){
@@ -41,11 +44,13 @@ void draw(){
   population.iter();
   printStats();
   
-  if (saver.shouldSave && saver.needsSave(generation)){
-    saver.doSave(population.populationList[0]);
+  if (imgSaver.needsSave(generation)){
+    imgSaver.doSave(population.populationList[0]);
+  }
+  if (statsSaver.needsSave(generation)){
+    statsSaver.doSave(population);
   }
   if (generation>maxGenerations && maxGenerations!=0) {
-    saver.doSave(population.populationList[0]);
     exit();
   }
   
@@ -54,7 +59,6 @@ void draw(){
 
 void keyPressed() {
   if (key=='q'){//manually quit
-    saver.doSave(population.populationList[0]);
     exit();
   }
   if (key=='p'){//pause
@@ -64,9 +68,16 @@ void keyPressed() {
     loop();
   }
   if (key=='s'){//save
-    saver.doSave(population.populationList[0]);
+    imgSaver.doSave(population.populationList[0]);
+    statsSaver.doSave(population);
   }
 }
+
+void stop() {
+  imgSaver.doSave(population.populationList[0]);
+  statsSaver.doSave(population);
+  statsSaver.finish();  
+} 
 
 void printStats() {
   print("gens = ");

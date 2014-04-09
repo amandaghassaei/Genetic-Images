@@ -29,7 +29,6 @@ class Population{
         nextGeneration[i+1] = children[1];
       }
     }
-    println(iterBestFitness);
     arrayCopy(nextGeneration, populationList);
   }
   

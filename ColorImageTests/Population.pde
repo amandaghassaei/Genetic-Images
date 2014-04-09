@@ -2,6 +2,7 @@ class Population{
   
   Individual[] populationList = new Individual[populationSize];
   Individual iterBestIndividual;
+  Individual iterWorstIndividual;
   
   //hill climbing variables
   int stagGenNum = 0;//number of generations since a child was more fit than parent
@@ -12,7 +13,6 @@ class Population{
   Population(){
     for (int i=0;i<populationSize;i++){//initialize random individuals
       populationList[i] = new Individual();
-      iterBestIndividual = populationList[0];//initialize something as iterBestIndividual to start
     }
     
     if (currentNumGenes==0){//if we're starting with no genes, we want to add a new one asap
@@ -25,6 +25,7 @@ class Population{
     if (hillClimb){
       for (int i=0;i<populationSize;i++){
         iterBestIndividual = hillClimb(populationList[i]);
+        iterWorstIndividual = iterBestIndividual;//same thing
         nextGeneration[i] = iterBestIndividual;
       }
     } else {
@@ -56,11 +57,16 @@ class Population{
   }
   
   ArrayList<Individual> createMatingPool(Individual[] currentPopulation){
+    iterBestIndividual.setFitness(0);
+    iterWorstIndividual.setFitness(100);
     ArrayList<Individual> matingPool = new ArrayList<Individual>();
     for (Individual individual : currentPopulation) {
       float fitness = individual.getFitness();
       if (fitness>iterBestIndividual.getFitness()){
         iterBestIndividual = individual;
+      }
+      if (fitness<iterWorstIndividual.getFitness()){
+        iterWorstIndividual = individual;
       }
       for (int i=0;i<int(fitness);i++){
         matingPool.add(individual);

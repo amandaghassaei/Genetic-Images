@@ -1,13 +1,17 @@
 //binary bitmap test
 
+import processing.pdf.*;
+
+ArrayList<PVector> plotPoints = new ArrayList<PVector>();//storage for scatter plot
+
 int imgHeight = 51;//px height of individual
 int imgWidth = 51;//px width of individual
 int totalNumGenes = imgWidth*imgHeight;
 
 int populationSize = 1;//number of individuals in a population (keep this even to keep it simple)
 int generation = 0;//generation number
-int maxGens = 0;//manually shut down sketch after we hit this many iterations and still no match (set to 0 to never stop)
-int saveImgAtIncrement = 100;//how often we should save an image for the movie (number of generations)
+int maxGens = 100000;//manually shut down sketch after we hit this many iterations and still no match (set to 0 to never stop)
+int saveImgAtIncrement = 1000;//how often we should save an image for the movie (number of generations)
 
 float geneMutationRate = 0.01;//change the value of a pixel
 float crossoverRate = 1.0;//rate of crossover reproduction vs cloning
@@ -21,16 +25,18 @@ int numTrials = trialsCol*trialsRow;
 Population[] populations = new Population[numTrials];
 
 PImage image;//storage for rendering
-String imgName = "bitmap"+"_pop"+populationSize+"_mut"+geneMutationRate+"_cross"+crossoverRate;
+String imgName = "bitmap"+"_pop"+populationSize+"_mut"+geneMutationRate+"_numPix"+imgHeight*imgWidth;
 
 void setup() {
-  size(imgWidth*trialsCol+trialsSpacing*(trialsCol-1),imgHeight*trialsRow+trialsSpacing*(trialsRow-1));
+  size(1000,500, PDF, imgName+".pdf");
   background(200);
   for (int i=0;i<numTrials;i++){
     populations[i] = new Population();
   }
   image = new PImage(imgWidth, imgHeight, ALPHA);
   image.loadPixels();
+  
+  noStroke();
 }
 
 void draw(){
@@ -43,11 +49,18 @@ void draw(){
     }
   }
   if (generation%saveImgAtIncrement==0){
-    saveFrame(imgName+"/gen-##########.tif");
+    PVector newPoint = new PVector(generation, populations[0].iterBestFitness);
+    plotPoints.add(newPoint);
+//    saveFrame(imgName+"/gen-##########.tif");
   }
+  background(255);
+  print(populations[0].iterBestFitness);
+  print("  ");
+  println(generation);
   generation++;
   if (allMatchesFound() || generation>maxGens && maxGens!=0) {
-    drawResultsFrame();
+    saveScatterPlot();
+//    drawResultsFrame();
     exit();
   }
 }
@@ -78,6 +91,16 @@ void drawResultsFrame(){
     text(populations[i].matchGen, ((i%trialsCol)*(imgWidth+trialsSpacing)+float(imgWidth)/2)*movScale-imgWidth*movScale/2,((i/trialsCol)*(imgHeight+trialsSpacing-1/2)+float(imgHeight)/2)*movScale-40, imgWidth*movScale, 80);  
   }
   saveFrame(imgName+"/gen-#####.tif");
+}
+
+void saveScatterPlot(){
+  background(255);
+  stroke(255, 0, 0);
+  beginShape();
+  for (PVector point : plotPoints){
+    vertex(width*point.x/generation, height*(1-point.y/(imgHeight*imgWidth))); 
+  }
+  endShape();
 }
 
 void keyPressed() {

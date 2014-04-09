@@ -1,6 +1,5 @@
 class Saver {
   
-  boolean shouldSave = true;
   int pow = 4;//images saves at equal increments along the x-axis of a power function - this variable sets the degree
   int numSavedImgs;
   int nextGenToSave;

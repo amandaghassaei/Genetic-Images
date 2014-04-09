@@ -28,7 +28,7 @@ class Individual {//an individual stores information for several genes
   }
   
   void printPolygons(){//save all polygons to PDF
-    beginRecord(PDF, fileName+"_gen"+generation+".pdf");
+    beginRecord(PDF, fileName+"_gen"+generation+"_polyCount"+genes.length+".pdf");
     noStroke();
     render(); 
     endRecord();
@@ -39,6 +39,10 @@ class Individual {//an individual stores information for several genes
     float scaledFitness = scaleFitness(calculateRawFitness());
     fitness = scaledFitness;
     return scaledFitness;    
+  }
+  
+  void setFitness(float newFitness) {//only used in special circumstances
+    fitness = newFitness;
   }
   
   float calculateRawFitness(){
@@ -55,7 +59,7 @@ class Individual {//an individual stores information for several genes
   
   float scaleFitness(float totalColorDistance){
     float diff = maxColorDeviation-totalColorDistance;
-    if (diff<0) return 0;
+    if (diff<0) return 0;//in case we actually made something worse than an all black screen
     return diff*100/maxColorDeviation;
   }
   
@@ -71,7 +75,9 @@ class Individual {//an individual stores information for several genes
     return new Individual(childGenes);
   }
   
-  Individual mutate(boolean forceMutation, boolean lastGeneMut){//forceMutation ensures that at least one mutation happens (need this for hill climbing)
+  Individual mutate(boolean forceMutation, boolean lastGeneMut){
+    //forceMutation ensures that at least one mutation happens (need this for hill climbing)
+    //lastGeneMut forces a mutation of the last gene only - used when new gene added
     if (genes.length==0) return this;
     boolean mutationHasOccurred = false;
     while (!mutationHasOccurred && forceMutation){
