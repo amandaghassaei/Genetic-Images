@@ -21,7 +21,7 @@ class Population{
   
   void iter() {//perform fitness test on all indivduals and create the next generation
     if (stagGenNum++ > numPlateau){
-      if (!hillClimb ||  populationList[i].genes.count == currentNumGenes){//if we're hill climbing, we need to ensure the last new gene added has been adopted by the current individual
+      if (!hillClimb ||  populationList[0].genes.length == currentNumGenes){//if we're hill climbing, we need to ensure the last new gene added has been adopted by the current individual
         currentNumGenes++;
         stagGenNum = 0;
       }

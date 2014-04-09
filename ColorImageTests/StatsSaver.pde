@@ -34,7 +34,7 @@ class StatsSaver {
     linearSaves++;
     nextLinearGenToSave = int(linearSaves*saveMultiplier);
     logSaves++;
-    nextLogGenToSave = pow(10,logSaves);
+    nextLogGenToSave = int(pow(10,logSaves));
   }
   
   void finish() {
