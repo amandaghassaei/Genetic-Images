@@ -11,7 +11,8 @@ String file1 = "teddy_stats.txt";
 int vInset = 50;
 int hInset = 70;
 
-String[] allFiles = {file1};//{file1, file2, file3};
+//opacity of plots (for comparisons)
+int opacity = 170;
 
 void setup() {
   
@@ -19,14 +20,17 @@ void setup() {
   background(255);
   beginRecord(PDF, file1+"_finalStats.pdf"); 
    
-  for (String filename : allFiles){
-    render(filename);
-  }
+  color red = color(255, 0, 0, opacity);
+  render(file1, red);
+//  color blue = color(0, 0, 255, opacity);
+//  render(file2, blue);
+//  color black = color(0, 0, 0, opacity);
+//  render(file3, black);
   
   drawAxes(); 
 
   endRecord();
-  
+  exit();
 }
 
 void loop() {
@@ -59,25 +63,32 @@ void drawAxes(){
   
 }
 
-void render(String filename) {
+void render(String filename, color plotColor) {
   String lines[] = loadStrings(filename);
+  fill(plotColor);
+  noStroke();
   float data[] = float(lines[0].split(","));
-  float lastGen = data[0];
+  float lastGeneration = data[0];
   float lastMax = data[1];
   float lastMin = data[2];
-  if ((lastMax-lastMin)<0.5) lastMax = lastMin+0.5;//cheat so the line shows up in the graph
-  fill(255, 0, 0, 70);
-  noStroke();
+  beginShape(QUAD_STRIP);
   for (String line : lines){
     data = float(line.split(","));
     float generation = data[0];
     float max = data[1];
     float min = data[2];
     float polygonCount = data[3];
-    if ((max-min)<0.5) max = min+0.5;//cheat so the line shows up in the graph
-    quad(hInset+lastGen/1000000*(width-2*hInset), vInset+(height-2*vInset)*(100-lastMin)/100, hInset+lastGen/1000000*(width-2*hInset),  vInset+(height-2*vInset)*(100-lastMax)/100, hInset+generation/1000000*(width-2*hInset),  vInset+(height-2*vInset)*(100-max)/100, hInset+generation/1000000*(width-2*hInset),  vInset+(height-2*vInset)*(100-min)/100);
-    lastGen = generation;
+    if ((max-min)<0.5) {
+      stroke(plotColor);
+      strokeWeight(2);
+      line(hInset+lastGeneration/1000000*(width-2*hInset),  vInset+(height-2*vInset)*(100-lastMax)/100, hInset+generation/1000000*(width-2*hInset),  vInset+(height-2*vInset)*(100-max)/100);
+      noStroke();
+    }
+    vertex(hInset+generation/1000000*(width-2*hInset),  vInset+(height-2*vInset)*(100-max)/100);
+    vertex(hInset+generation/1000000*(width-2*hInset),  vInset+(height-2*vInset)*(100-min)/100);
+    lastGeneration = generation;
     lastMax = max;
     lastMin = min;
   }
+  endShape();
 }

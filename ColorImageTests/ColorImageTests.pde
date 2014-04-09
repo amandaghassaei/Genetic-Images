@@ -51,6 +51,7 @@ void draw(){
     statsSaver.doSave(population);
   }
   if (generation>maxGenerations && maxGenerations!=0) {
+    complete();
     exit();
   }
   
@@ -59,6 +60,7 @@ void draw(){
 
 void keyPressed() {
   if (key=='q'){//manually quit
+    complete();
     exit();
   }
   if (key=='p'){//pause
@@ -73,7 +75,7 @@ void keyPressed() {
   }
 }
 
-void stop() {
+void complete() {
   imgSaver.doSave(population.populationList[0]);
   statsSaver.doSave(population);
   statsSaver.finish();  
