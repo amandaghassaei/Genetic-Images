@@ -11,8 +11,8 @@ boolean hillClimb = false;
 int currentNumGenes = 0;//starting # genes per individual
 int totalNumGenes = 0;//max number of genes (set to 0 for no max)
 int maxGenerations = 1000000;//manually shut down sketch after we hit this many iterations (set to 0 to never stop searching)
-int populationSize = 10;//number of individuals in a population (keep this even to keep it simple, or if we are doing hillclimb, must set this to 1)
-int numPlateau = 250;//number of generations w/o a new best match before we add another gene into the mix
+int populationSize = 100;//number of individuals in a population (keep this even to keep it simple, or if we are doing hillclimb, must set this to 1)
+int numPlateau = 25;//number of generations w/o a new best match before we add another gene into the mix
 
 //storage globals
 Population population = new Population();//storage for individuals
