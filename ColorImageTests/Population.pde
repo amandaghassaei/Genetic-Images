@@ -19,8 +19,8 @@ class Population{
   }
   
   void iter() {//perform fitness test on all indivduals and create the next generation
-    if (stagGenNum++ > numPlateau){
-      if (!hillClimb ||  populationList[0].genes.length == currentNumGenes){//if we're hill climbing, we need to ensure the last new gene added has been adopted by the current individual
+    if (bestIndividualSoFar.genes.length == currentNumGenes){//we need to ensure the last new gene added has been successfully introduced before we add another
+      if (stagGenNum++ > numPlateau){
         currentNumGenes++;
         stagGenNum = 0;
       }
@@ -33,12 +33,22 @@ class Population{
         nextGeneration[i] = iterBestIndividual;
       }
     } else {
+      calculateFitness(populationList);
       ArrayList<Individual> matingPool = createMatingPool(populationList);
       for (int i=0;i<populationSize;i++){
         nextGeneration[i] = reproduce(matingPool);
       }
     }
     arrayCopy(nextGeneration, populationList);
+    if (generation==0) {
+      bestIndividualSoFar = iterBestIndividual.copy();
+      bestIndividualSoFar.setFitness(iterBestIndividual.getFitness());
+    }
+    if (iterBestIndividual.getFitness()>bestIndividualSoFar.getFitness()){
+      bestIndividualSoFar = iterBestIndividual.copy();
+      bestIndividualSoFar.setFitness(iterBestIndividual.getFitness());
+      stagGenNum = 0;
+    }
   }
   
   Individual hillClimb(Individual parent){
@@ -56,30 +66,37 @@ class Population{
       return parent;
   }
   
-  ArrayList<Individual> createMatingPool(Individual[] currentPopulation){
+  void calculateFitness(Individual[] currentPopulation){//calculate fitness of all individuals, set iterBest and Worst
     iterBestIndividual.setFitness(0);
     iterWorstIndividual.setFitness(100);
-    ArrayList<Individual> matingPool = new ArrayList<Individual>();
     for (Individual individual : currentPopulation) {
       float fitness = individual.getFitness();
       if (fitness>iterBestIndividual.getFitness()){
-        iterBestIndividual = individual;
+        iterBestIndividual = individual.copy();
+        iterBestIndividual.setFitness(fitness);
       }
       if (fitness<iterWorstIndividual.getFitness()){
-        iterWorstIndividual = individual;
+        iterWorstIndividual = individual.copy();
+        iterWorstIndividual.setFitness(fitness);
       }
-      if (fitness<1) fitness = 1;//get things going
+    }
+  }
+  
+  ArrayList<Individual> createMatingPool(Individual[] currentPopulation){
+    ArrayList<Individual> matingPool = new ArrayList<Individual>();
+    for (Individual individual : currentPopulation) {
+      float fitness = adjustedFitnessForThisIter(individual.getFitness());
+      if (fitness<1) fitness = 1;//get things going/give everyone some chance at mating
       for (int i=0;i<int(fitness);i++){
         matingPool.add(individual);
       }
     }
-    if (generation==0) bestIndividualSoFar = iterBestIndividual.copy();
-    if (iterBestIndividual.getFitness()>bestIndividualSoFar.getFitness()){
-      bestIndividualSoFar = iterBestIndividual.copy();
-      println(bestIndividualSoFar.getFitness());
-      stagGenNum = 0;
-    }
     return matingPool;
+  }
+  
+  float adjustedFitnessForThisIter(float fitness) {//individuals are too similar - need to adjust fitness for this iter to promote selection
+    if (iterBestIndividual.getFitness()==0) return 0.0;//no divide by 0
+    return fitness/(iterBestIndividual.getFitness()-iterWorstIndividual.getFitness())*20;//picked an arbitrary val of 20 to scale, change this to increase/decrease range of fitness
   }
   
   Individual reproduce(ArrayList<Individual> matingPool){
