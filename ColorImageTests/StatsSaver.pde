@@ -4,7 +4,8 @@ class StatsSaver {
   int linearSaves;
   int nextLinearGenToSave;
   int logSaves;
-  int nextLogGenToSave;//also save every 10^n, in case we want to plot in log scale
+  int nextLogGenToSave;//extra saves, in case we want to plot in log scale
+  int logIncr;
   String statsFilename = fileName+"_stats.txt";
   PrintWriter statsOutput;
   
@@ -13,6 +14,7 @@ class StatsSaver {
     logSaves = -1;
     nextLinearGenToSave = 0;
     nextLogGenToSave = 0;
+    logIncr = 1;
     statsOutput = createWriter(statsFilename);
   }
   
@@ -37,7 +39,12 @@ class StatsSaver {
     statsOutput.print(",");
     statsOutput.println(currentNumGenes);
     nextLinearGenToSave = int(linearSaves*saveMultiplier);
-    nextLogGenToSave = int(pow(10,logSaves));
+    if (nextLogGenToSave==10) logIncr = 10;
+    if (nextLogGenToSave==100) logIncr = 100;
+    if (nextLogGenToSave==1000) logIncr = 1000;
+    if (nextLogGenToSave==10000) logIncr = 10000;
+    if (nextLogGenToSave==100000) logIncr = 100000;
+    nextLogGenToSave += logIncr;
   }
   
   void finish() {
