@@ -15,7 +15,7 @@ int hInset = 70;
 int opacity = 170;
 
 //scale for axes
-boolean logX = false;
+boolean logX = true;
 boolean logY = true;
 
 void setup() {

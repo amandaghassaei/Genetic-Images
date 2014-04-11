@@ -17,10 +17,15 @@ class StatsSaver {
   }
   
   boolean needsSave(int generation) {
-    if (generation==nextLinearGenToSave || generation==nextLogGenToSave){
-      return true;
+    boolean shouldSave = false;
+    if (generation==nextLinearGenToSave){
+      linearSaves++;
+      shouldSave = true;
+    } if (generation==nextLogGenToSave){
+      logSaves++;
+      shouldSave = true;
     }
-    return false;
+    return shouldSave;
   }
   
   void doSave(Population population) {
@@ -31,9 +36,7 @@ class StatsSaver {
     statsOutput.print(population.iterWorstIndividual.getFitness());
     statsOutput.print(",");
     statsOutput.println(currentNumGenes);
-    linearSaves++;
     nextLinearGenToSave = int(linearSaves*saveMultiplier);
-    logSaves++;
     nextLogGenToSave = int(pow(10,logSaves));
   }
   
