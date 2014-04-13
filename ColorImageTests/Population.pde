@@ -1,8 +1,8 @@
 class Population{
   
   Individual[] populationList = new Individual[populationSize];
-  Individual iterBestIndividual = new Individual();
-  Individual iterWorstIndividual = new Individual();
+  Individual iterBestIndividual;
+  Individual iterWorstIndividual;
   
   int stagGenNum = 0;//number of generations since a child was more fit than parent
   
@@ -11,6 +11,7 @@ class Population{
   
   Population(){
     for (int i=0;i<populationSize;i++){//initialize random individuals
+      println("amanda");
       populationList[i] = new Individual();
     } 
     if (currentNumGenes==0){//if we're starting with no genes, we want to add a new one asap, (but still print one black screen for gen=0 to show where we started)
@@ -19,10 +20,12 @@ class Population{
   }
   
   void iter() {//perform fitness test on all indivduals and create the next generation
-    if (bestIndividualSoFar.genes.length == currentNumGenes){//we need to ensure the last new gene added has been successfully introduced before we add another
-      if (stagGenNum++ > numPlateau){
-        currentNumGenes++;
-        stagGenNum = 0;
+    if (totalNumGenes>currentNumGenes){
+      if (bestIndividualSoFar.genes.length == currentNumGenes){//we need to ensure the last new gene added has been successfully introduced before we add another
+        if (stagGenNum++ > numPlateau){
+          currentNumGenes++;
+          stagGenNum = 0;
+        }
       }
     }
     Individual[] nextGeneration = new Individual[populationSize];

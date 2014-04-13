@@ -6,16 +6,20 @@ class Gene {//a gene specifies a shape and a color
   int opacity = 50;
   
   //mutation variables
-  float geneColorMutationRate = 0.05;
   float colorTol = 20;
-  float geneCoordMutationRate = 0.02;
   float coordMutationDistance = 30;
   
   Gene() {//init random new gene
     geneColor = color(random(256), random(256), random(256), opacity);//initialize random color
-    corners[0] = new PVector(random(0, width), random(height));//random initial coordinate
-    for (int i=1;i<numCorners;i++){
-      corners[i] = new PVector(getNearbyNumber(corners[0].x, 0, width, 20), getNearbyNumber(corners[0].y, 0, height, 20));
+    corners[0] = new PVector(random(width), random(height));//random initial coordinate
+    if (initializeSmallTriangles){
+      for (int i=1;i<numCorners;i++){
+        corners[i] = new PVector(getNearbyNumber(corners[0].x, 0, width, 20), getNearbyNumber(corners[0].y, 0, height, 20));
+      }
+    } else {
+      for (int i=1;i<numCorners;i++){
+        corners[i] = new PVector(random(width), random(height));//random initial coordinate
+      }
     }
   }
   
@@ -37,6 +41,8 @@ class Gene {//a gene specifies a shape and a color
   }
   
   boolean mutate() {
+    float geneColorMutationRate = 0.02/(currentNumGenes/100+1);//avg of 2 color mutations per Individual mutation for higher numGenes
+    float geneCoordMutationRate = 0.01/(currentNumGenes/100+1);//avg of 1 coordinate mutations per Individual mutation for higher numGenes
     boolean mutationHasOccurred = false;
     if (random(1)<geneColorMutationRate){
       geneColor = getSimilarColor(geneColor);
