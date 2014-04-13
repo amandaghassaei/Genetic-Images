@@ -3,27 +3,24 @@ import processing.pdf.*;
 
 //image to match:
 String fileName = "teddy";
-
-//hillclimb variables
-boolean hillClimb = true;
-
-boolean initializeSmallTriangles = false;
+String imageName = fileName + ".jpg";
+PImage image;//storage for image
 
 //global variables
 int currentNumGenes = 100;//starting # genes per individual
 int totalNumGenes = 100;//max number of genes (set to 0 for no max)
 int maxGenerations = 1000000;//manually shut down sketch after we hit this many iterations (set to 0 to never stop searching)
-int populationSize = 1;//number of individuals in a population (keep this even to keep it simple, or if we are doing hillclimb, must set this to 1)
+int populationSize = 1;//number of individuals in a population
 int numPlateau = 100;//number of generations w/o a new best match before we add another gene into the mix
+boolean initializeSmallTriangles = false;//set to true to initialize each new gene as a very small triangle, this might help to more easily introduce it into the gene pool bc it will affect less pixels
+boolean hillClimb = true;//if you are running this in hill climbing mode, you probably want to set the populationSize variable to 1, otherwise you will hillclimb a population on n individuals in parallel, they will not mix with eachother
 
 //storage globals
 Population population;//storage for individuals
+int generation = 0;//generation number
+float maxColorDeviation;//baseline for worst fitness (calculated in setup), use to scale raw img color deviation into something usable
 Saver imgSaver;//keeps track of when to save imgs
 StatsSaver statsSaver;//keeps track of when to save stats to txt file
-int generation = 0;//generation number
-String imageName = fileName + ".jpg";
-PImage image;//storage for image
-float maxColorDeviation;//baseline for worst fitness (calculated in setup), use to scale raw img color deviation into something usable
 
 Individual bestIndividualSoFar;
 
