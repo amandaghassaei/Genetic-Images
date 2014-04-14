@@ -1,16 +1,22 @@
 class Individual {//an individual stores information for several genes
 
-  Gene[] genes = new Gene[currentNumGenes];
+  Gene[] genes;
   float fitness = -1;//initialize as nonsense so we know it needs to be calculated
   
   Individual(){
+    genes = new Gene[currentNumGenes];
     for (int i=0;i<currentNumGenes;i++){
       genes[i] = new Gene();
     }
   }
   
-  Individual(Gene[] initialGenes) {
-     for (int i=0;i<currentNumGenes;i++){
+  Individual(Gene[] initialGenes, boolean empty) {//empty flag is how we calculate worstPossibleIndividual, forces init of Individual with no genes
+    if (empty) {
+      genes = new Gene[0];
+      return;
+    }
+    genes = new Gene[currentNumGenes];
+    for (int i=0;i<currentNumGenes;i++){
       if (i>=initialGenes.length){
         genes[i] = new Gene();
       } else {
@@ -19,23 +25,25 @@ class Individual {//an individual stores information for several genes
     }
   }
   
-  void render() {//draw
-    background(0);//clear current image
+  void render(int row, int col) {//draw at particular place on grid
+    pushMatrix();
+    translate(col*image.width, row*image.height);
     for (Gene gene : genes){
       gene.render();
     }
+    popMatrix();
   }
   
-  void printPolygons(){//save all polygons to PDF
-    beginRecord(PDF, fileName+"_gen"+generation+"_polyCount"+genes.length+".pdf");
-    noStroke();
-    render(); 
-    endRecord();
+  float getFitness() {//used to render individual at a particular point on the grid
+    return getFitness(0,0);    
   }
   
-  float getFitness() {
-    if (fitness!=-1) return fitness;//don't calculate fitness twice
-    float scaledFitness = scaleFitness(calculateRawFitness());
+  float getFitness(int row, int col) {//used to render individual at a particular point on the grid
+    if (fitness!=-1) {
+      return fitness;//don't calculate fitness twice
+    }
+    render(row, col);
+    float scaledFitness = scaleFitness(calculateRawFitness(row, col));
     fitness = scaledFitness;
     return scaledFitness;    
   }
@@ -44,13 +52,12 @@ class Individual {//an individual stores information for several genes
     fitness = newFitness;
   }
   
-  float calculateRawFitness(){
-    render();
+  float calculateRawFitness(int row, int col){
     int rawFitness = 0;
-    for (int i=0;i<height;i++) {
-      for (int j=0;j<width;j++) {
-        color newColor = get(j,i);
-        rawFitness += colorDistance(image.pixels[j+i*width], newColor);//pythagorean distance in RGB color space (LAB takes too much time)
+    for (int i=0;i<image.height;i++) {
+      for (int j=0;j<image.width;j++) {
+        color newColor = get(col*image.width+j,row*image.height+i);
+        rawFitness += colorDistance(image.pixels[j+i*image.width], newColor);//pythagorean distance in RGB color space (LAB takes too much time)
       }
     }
     return rawFitness;
@@ -76,7 +83,7 @@ class Individual {//an individual stores information for several genes
         }
       }
     }
-    return new Individual(childGenes);
+    return new Individual(childGenes, false);
   }
   
   Individual mutate(boolean forceMutation, boolean lastGeneMut){
@@ -98,6 +105,6 @@ class Individual {//an individual stores information for several genes
   }
   
   Individual copy(){
-    return new Individual(genes);
+    return new Individual(genes, false);
   }
 }

@@ -2,7 +2,7 @@ class Gene {//a gene specifies a shape and a color
 
   color geneColor;
   int numCorners = 3;//all genes are triangles
-  PVector[] corners = new PVector[numCorners];
+  PVector[] corners;
   int opacity = 50;
   
   //mutation variables
@@ -10,20 +10,22 @@ class Gene {//a gene specifies a shape and a color
   float coordMutationDistance = 30;
   
   Gene() {//init random new gene
+    corners = new PVector[numCorners];
     geneColor = color(random(256), random(256), random(256), opacity);//initialize random color
-    corners[0] = new PVector(random(width), random(height));//random initial coordinate
+    corners[0] = new PVector(random(image.width), random(image.height));//random initial coordinate
     if (initializeSmallTriangles){
       for (int i=1;i<numCorners;i++){
-        corners[i] = new PVector(getNearbyNumber(corners[0].x, 0, width, 20), getNearbyNumber(corners[0].y, 0, height, 20));
+        corners[i] = new PVector(getNearbyNumber(corners[0].x, 0, image.width, 20), getNearbyNumber(corners[0].y, 0, image.height, 20));
       }
     } else {
       for (int i=1;i<numCorners;i++){
-        corners[i] = new PVector(random(width), random(height));//random initial coordinate
+        corners[i] = new PVector(random(image.width), random(image.height));//random initial coordinate
       }
     }
   }
   
   Gene(color initColor, PVector[] initCorners){//init with default parameters
+    corners = new PVector[numCorners];
     geneColor = initColor;
     for (int i=0;i<3;i++){
       corners[i] = new PVector(initCorners[i].x, initCorners[i].y);
@@ -50,8 +52,8 @@ class Gene {//a gene specifies a shape and a color
     }
     if (random(1)<geneCoordMutationRate){
       int coordinateNum = int(random(3));
-      corners[coordinateNum].x = getNearbyNumber(corners[coordinateNum].x, 0, width, coordMutationDistance);
-      corners[coordinateNum].y = getNearbyNumber(corners[coordinateNum].y, 0, height, coordMutationDistance);
+      corners[coordinateNum].x = getNearbyNumber(corners[coordinateNum].x, 0, image.width, coordMutationDistance);
+      corners[coordinateNum].y = getNearbyNumber(corners[coordinateNum].y, 0, image.height, coordMutationDistance);
       mutationHasOccurred = true;
     }
     return mutationHasOccurred;

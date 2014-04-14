@@ -16,8 +16,8 @@ class Saver {
     return false;
   }
   
-  void doSave(Individual individual) {
-    individual.printPolygons();
+  void doSave(Population population) {
+    population.printPolygons();
     numSavedImgs++;
     nextGenToSave = int(pow(numSavedImgs, pow));
   }

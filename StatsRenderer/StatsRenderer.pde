@@ -3,9 +3,10 @@
 import processing.pdf.*;
 
 //files to render (make sure they are loaded in current directory)
-String file1 = "teddy_stats.txt";
-String file2 = "teddy_stats2.txt";
-String file3 = "teddy_stats3.txt";
+String file1 = "first.txt";
+String file2 = "lowerchanging.txt";
+String file3 = "changingmut.txt";
+String file4 = "1000genesToStart.txt";
 
 //insets for drawing graph
 int vInset = 50;
@@ -15,8 +16,8 @@ int hInset = 70;
 int opacity = 170;
 
 //scale for axes
-boolean logX = true;
-boolean logY = true;
+boolean logX = false;
+boolean logY = false;
 
 void setup() {
   
@@ -30,6 +31,8 @@ void setup() {
   render(file2, blue);
   color black = color(0, 0, 0, opacity);
   render(file3, black);
+  color green = color(0, 255, 0, opacity);
+  render(file4, green);
   
   drawAxes(); 
 
@@ -48,7 +51,7 @@ void drawAxes(){
   fill(0);
   textSize(txtSize);
   strokeWeight(2);
-//  line(hInset, vInset, hInset, height-vInset);
+  line(hInset, vInset, hInset, height-vInset);
   textAlign(RIGHT);
   if (logY){
     for (int i=0;i<4;i++){
