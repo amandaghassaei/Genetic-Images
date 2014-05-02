@@ -1,7 +1,7 @@
 class Individual {//an individual stores information for several genes
 
   int[] genes;
-  int fitness = 0;
+  int fitness = -1;
   
   Individual(int[] initialGenes) {
     if (initialGenes!=null){
@@ -25,7 +25,7 @@ class Individual {//an individual stores information for several genes
   }
   
   int getFitness() {
-    if (fitness != 0) return fitness;
+    if (fitness != -1) return fitness;
     fitness = 0;
     for (int i=0;i<totalNumGenes;i++) {
       if (genes[i] == (imageOrig.pixels[i]&0xFF)){
@@ -71,6 +71,5 @@ class Individual {//an individual stores information for several genes
     int[] genesCopy = new int[totalNumGenes];
     arrayCopy(genes, genesCopy);
     return new Individual(genesCopy);
-    
   }
 }

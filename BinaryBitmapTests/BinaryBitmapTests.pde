@@ -17,7 +17,6 @@ float geneMutationRate = 0.01;//change the value of a pixel
 float crossoverRate = 1.0;//rate of crossover reproduction vs cloning
 boolean hillClimb = true;
 
-//run multiple trials at once
 Population population;
 
 PImage image;//storage for rendering
@@ -25,7 +24,6 @@ String imgName = "bitmap"+"_pop"+populationSize+"_mut"+geneMutationRate;
 
 StatsSaver saver;
 boolean forceQuit = false;
-
 
 void setup() {
   
@@ -59,6 +57,10 @@ void draw(){
     saver.doSave(population);
   }
   
+  print(100*population.iterBestFitness/float(totalNumGenes));
+  print("  ");
+  println(generation);
+  
   if (forceQuit || allMatchesFound() || generation>maxGens && maxGens!=0) {
     population.iterBestIndividual.render();
     saveFrame(imgName+"/gen-##########.tif");
@@ -67,9 +69,6 @@ void draw(){
     exit();
   }
   
-  print(100*population.iterBestFitness/float(totalNumGenes));
-  print("  ");
-  println(generation);
   generation++;
 }
 

@@ -3,7 +3,6 @@ class Population{
   Individual[] populationList = new Individual[populationSize];
   boolean matchFound = false;//once we've found a match, set this to true
   String matchGen = "no matches found";//record the gen number where match was found
-  int iterBestFitness;//the best fitness for one iteration
   Individual iterBestIndividual;
   
   Population(){
@@ -18,15 +17,14 @@ class Population{
     if (hillClimb){
       for (int i=0;i<populationSize;i++){
         iterBestIndividual = hillClimb(i);
-        iterBestFitness = iterBestIndividual.getFitness();
         nextGeneration[i] = iterBestIndividual;
       }
     } else {
       ArrayList<Individual> matingPool = createMatingPool(populationList);
       for (int i=0;i<populationSize/2;i++){
         Individual[] children = reproduce(matingPool);
-        nextGeneration[i] = children[0];
-        nextGeneration[i+1] = children[1];
+        nextGeneration[2*i] = children[0];
+        nextGeneration[2*i+1] = children[1];
       }
     }
     arrayCopy(nextGeneration, populationList);
