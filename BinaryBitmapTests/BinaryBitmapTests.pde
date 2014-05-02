@@ -8,19 +8,19 @@ PImage imageOrig;//storage for image
 
 int totalNumGenes;
 
-int populationSize = 1;//number of individuals in a population (keep this even to keep it simple)
+int populationSize = 100;//number of individuals in a population (keep this even to keep it simple)
 int generation = 0;//generation number
 int maxGens = 1000000;//manually shut down sketch after we hit this many iterations and still no match (set to 0 to never stop)
 int saveImgAtIncrement = 100;//how often we should save an image for the movie (number of generations)
 
-float geneMutationRate = 0.01;//change the value of a pixel
+float geneMutationRate;//change the value of a pixel
 float crossoverRate = 1.0;//rate of crossover reproduction vs cloning
-boolean hillClimb = true;
+boolean hillClimb = false;
 
 Population population;
 
 PImage image;//storage for rendering
-String imgName = "bitmap"+"_pop"+populationSize+"_mut"+geneMutationRate;
+String imgName = "bitmap"+"_pop"+populationSize;
 
 StatsSaver saver;
 boolean forceQuit = false;
@@ -34,6 +34,7 @@ void setup() {
   background(0);
   
   totalNumGenes = imageOrig.width*imageOrig.height;
+  geneMutationRate = 0.0001;
   population = new Population();
   
   image = new PImage(imageOrig.width, imageOrig.height, ALPHA);
@@ -57,7 +58,7 @@ void draw(){
     saver.doSave(population);
   }
   
-  print(100*population.iterBestFitness/float(totalNumGenes));
+  print(100*population.iterBestIndividual.getFitness()/float(totalNumGenes));
   print("  ");
   println(generation);
   

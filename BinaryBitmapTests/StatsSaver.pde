@@ -43,7 +43,7 @@ class StatsSaver {
     statsOutput.print(",");
     statsOutput.print(100*population.iterBestIndividual.getFitness()/float(totalNumGenes));
     statsOutput.print(",");
-    statsOutput.print(100*population.iterBestIndividual.getFitness()/float(totalNumGenes));
+    statsOutput.print(100*population.iterWorstIndividual.getFitness()/float(totalNumGenes));
     statsOutput.print(",");
     statsOutput.println(totalNumGenes);
     nextLinearGenToSave = int(linearSaves*saveMultiplier);
