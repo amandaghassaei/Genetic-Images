@@ -35,13 +35,18 @@ class Individual {//an individual stores information for several genes
   }
   
   float getFitness() {//used to render individual at a particular point on the grid
-    return getFitness(0,0);    
-  }
-  
-  float getFitness(int row, int col) {//used to render individual at a particular point on the grid
     if (fitness!=-1) {
       return fitness;//don't calculate fitness twice
     }
+    background(0);
+    return getFitness(0,0, true);    
+  }
+  
+  float getFitness(int row, int col, boolean clearBackground) {//used to render individual at a particular point on the grid
+    if (fitness!=-1) {
+      return fitness;//don't calculate fitness twice
+    }
+    if (clearBackground) background(0);
     render(row, col);
     float scaledFitness = scaleFitness(calculateRawFitness(row, col));
     fitness = scaledFitness;

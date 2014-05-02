@@ -21,19 +21,15 @@ class Individual {//an individual stores information for several genes
     }
     image.pixels = pixelsArray;
     image.updatePixels();
+    image(image,0,0);
   }
   
   int getFitness() {
+    if (fitness != 0) return fitness;
     fitness = 0;
     for (int i=0;i<totalNumGenes;i++) {
-      if (i%2==1){
-        if (genes[i] == 255) {
-          fitness++;
-        }
-      } else {
-        if (genes[i] == 0) {
-          fitness++;
-        }
+      if (genes[i] == (imageOrig.pixels[i]&0xFF)){
+        fitness++;
       }
     }
     return fitness;    

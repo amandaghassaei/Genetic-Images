@@ -64,7 +64,7 @@ class Population{
         mutateLastGeneOnly = false;
       }
       Individual mutant = parent.copy().mutate(true, mutateLastGeneOnly);
-      if (mutant.getFitness()>parent.getFitness()){
+      if (mutant.getFitness(0,0,true)>parent.getFitness(0,0,true)){
         stagGenNum = 0;
         return mutant;
       }
@@ -82,7 +82,7 @@ class Population{
         background(0);
         fitness = individual.getFitness();
       } else {
-        fitness = individual.getFitness(i/numCols, i%numCols);
+        fitness = individual.getFitness(i/numCols, i%numCols, falseq);
       }
       if (fitness>iterBestIndividual.getFitness()){
         iterBestIndividual = individual.copy();
@@ -110,7 +110,7 @@ class Population{
   float adjustedFitnessForThisIter(float fitness) {//individuals are too similar - need to adjust fitness for this iter to promote selection
     if (iterBestIndividual.getFitness()==0) return 0.0;//no divide by 0
     if (iterBestIndividual.getFitness()-iterWorstIndividual.getFitness()==0) return 0.0;//no divide by 0
-    return fitness/(iterBestIndividual.getFitness()-iterWorstIndividual.getFitness())*5;//picked an arbitrary val of 20 to scale, change this to increase/decrease range of fitness
+    return fitness/(iterBestIndividual.getFitness()-iterWorstIndividual.getFitness())*20;//picked an arbitrary val of 20 to scale, change this to increase/decrease range of fitness
   }
   
   Individual reproduce(ArrayList<Individual> matingPool){
