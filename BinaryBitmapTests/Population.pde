@@ -24,6 +24,7 @@ class Population{
         nextGeneration[i] = iterBestIndividual;
       }
     } else {
+      calcAllFitness(populationList);
       ArrayList<Individual> matingPool = createMatingPool(populationList);
       for (int i=0;i<populationSize/2;i++){
         Individual[] children = reproduce(matingPool);
@@ -43,8 +44,7 @@ class Population{
       return parent;
   }
   
-  ArrayList<Individual> createMatingPool(Individual[] currentPopulation){
-    ArrayList<Individual> matingPool = new ArrayList<Individual>();
+  void calcAllFitness(Individual[] currentPopulation){
     iterBestIndividual.fitness = 0;
     iterWorstIndividual.fitness = totalNumGenes;
     for (Individual individual : currentPopulation) {
@@ -61,7 +61,14 @@ class Population{
         println(geneMutationRate + "," + populationSize + "," + generation);
         matchFound = true;
       }
-      for (int i=0;i<fitness;i++){
+    }
+  }
+  
+  ArrayList<Individual> createMatingPool(Individual[] currentPopulation){
+    ArrayList<Individual> matingPool = new ArrayList<Individual>();
+    for (Individual individual : currentPopulation) {
+      int scaledFitness = int(20*float(individual.getFitness()-iterWorstIndividual.getFitness())/float(iterBestIndividual.getFitness()-iterWorstIndividual.getFitness()));
+      for (int i=0;i<scaledFitness;i++){
         matingPool.add(individual);
       }
     }

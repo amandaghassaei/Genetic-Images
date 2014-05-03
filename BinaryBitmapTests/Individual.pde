@@ -25,7 +25,7 @@ class Individual {//an individual stores information for several genes
   }
   
   int getFitness() {
-    if (fitness != -1) return fitness;
+    if (fitness != -1) return fitness;//if we've already calculated this parameter
     fitness = 0;
     for (int i=0;i<totalNumGenes;i++) {
       if (genes[i] == (imageOrig.pixels[i]&0xFF)){
@@ -38,7 +38,7 @@ class Individual {//an individual stores information for several genes
   Individual[] crossover(Individual mate){
     int[] child1Genes = new int[totalNumGenes];
     int[] child2Genes = new int[totalNumGenes];
-    for (int i=0;i<totalNumGenes;i++){
+    for (int i=0;i<totalNumGenes;i++){//uniform crossover
       if (random(1)<0.5){
         child1Genes[i] = genes[i];
         child2Genes[i] = mate.genes[i];
