@@ -1,7 +1,7 @@
 class Individual {//an individual stores information for several genes
 
   int[] genes;
-  int fitness = -1;
+  float fitness = -1;
   
   Individual(int[] initialGenes) {
     if (initialGenes!=null){
@@ -28,9 +28,7 @@ class Individual {//an individual stores information for several genes
     if (fitness != -1) return fitness;//if we've already calculated this parameter
     fitness = 0;
     for (int i=0;i<totalNumGenes;i++) {
-      if (genes[i] == (imageOrig.pixels[i]&0xFF)){
-        fitness++;
-      }
+      fitness += 1-(float(abs(genes[i] - (imageOrig.pixels[i]&0xFF))))/255.0;
     }
     return fitness;    
   }
@@ -57,11 +55,7 @@ class Individual {//an individual stores information for several genes
     boolean mutationOccurred = false;
     for (int i=0;i<totalNumGenes;i++){
       if (random(1)<geneMutationRate){//gene replacement
-        if (genes[i] == 0){
-          genes[i] = 255;
-        } else {
-          genes[i] = 0;
-        }
+        genes[i] = pickRandomGene();
         mutationOccurred = true;
       }
     }
@@ -73,8 +67,7 @@ class Individual {//an individual stores information for several genes
   }
   
   int pickRandomGene(){
-    if (int(random(2))<1) return 255;
-    return 0;
+    return int(random(256));
   }
   
   Individual makeCopy(){

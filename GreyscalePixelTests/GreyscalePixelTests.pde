@@ -20,7 +20,7 @@ boolean hillClimb = false;
 Population population;
 
 PImage image;//storage for rendering
-String imgName = "bitmap"+"_pop"+populationSize;
+String imgName = "grey"+"_pop"+populationSize;
 
 StatsSaver saver;
 boolean forceQuit = false;
