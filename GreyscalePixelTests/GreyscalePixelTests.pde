@@ -2,7 +2,7 @@
 
 import processing.pdf.*;
 
-String fileName = "escher";
+String fileName = "tree";
 String imageOrigName = fileName + ".png";
 PImage imageOrig;//storage for image
 
@@ -20,7 +20,7 @@ boolean hillClimb = false;
 Population population;
 
 PImage image;//storage for rendering
-String imgName = "grey"+"_pop"+populationSize;
+String imgName;
 
 StatsSaver saver;
 boolean forceQuit = false;
@@ -34,7 +34,10 @@ void setup() {
   background(0);
   
   totalNumGenes = imageOrig.width*imageOrig.height;
-  geneMutationRate = 0.01;
+  geneMutationRate = 1/float(totalNumGenes);
+  
+  imgName = "grey"+"_pop"+populationSize+"_mut"+geneMutationRate;
+  
   population = new Population();
   
   image = new PImage(imageOrig.width, imageOrig.height, ALPHA);

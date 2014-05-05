@@ -39,8 +39,10 @@ class Population{
       Individual parent = populationList[i];
       Individual mutant = parent.makeCopy().mutate(true);
       if (mutant.getFitness()>parent.getFitness()){
+        iterWorstIndividual = parent;
         return mutant;
       }
+      iterWorstIndividual = mutant;
       return parent;
   }
   
@@ -48,7 +50,7 @@ class Population{
     iterBestIndividual.fitness = 0;
     iterWorstIndividual.fitness = totalNumGenes;
     for (Individual individual : currentPopulation) {
-      int fitness = individual.getFitness();
+      float fitness = individual.getFitness();
       if (fitness>iterBestIndividual.getFitness()){
         iterBestIndividual = individual;
       }
@@ -67,7 +69,7 @@ class Population{
   ArrayList<Individual> createMatingPool(Individual[] currentPopulation){
     ArrayList<Individual> matingPool = new ArrayList<Individual>();
     for (Individual individual : currentPopulation) {
-      int scaledFitness = int(20*float(individual.getFitness()-iterWorstIndividual.getFitness())/float(iterBestIndividual.getFitness()-iterWorstIndividual.getFitness()));
+      int scaledFitness = int(20*(individual.getFitness()-iterWorstIndividual.getFitness())/(iterBestIndividual.getFitness()-iterWorstIndividual.getFitness()));
       for (int i=0;i<scaledFitness;i++){
         matingPool.add(individual);
       }

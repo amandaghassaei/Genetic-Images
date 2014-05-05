@@ -39,8 +39,10 @@ class Population{
       Individual parent = populationList[i];
       Individual mutant = parent.makeCopy().mutate(true);
       if (mutant.getFitness()>parent.getFitness()){
+        iterWorstIndividual = parent;
         return mutant;
       }
+      iterWorstIndividual = mutant;
       return parent;
   }
   
@@ -77,6 +79,10 @@ class Population{
   
   Individual[] reproduce(ArrayList<Individual> matingPool){
     int poolSize = matingPool.size();
+    if (poolSize == 0){
+      finish();
+      return null;
+    }
     Individual[] children = new Individual[2];
     Individual parent1 = matingPool.get(int(random(poolSize)));
     Individual parent2 = matingPool.get(int(random(poolSize)));

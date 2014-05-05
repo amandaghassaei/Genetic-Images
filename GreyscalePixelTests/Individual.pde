@@ -24,7 +24,7 @@ class Individual {//an individual stores information for several genes
     image(image,0,0);
   }
   
-  int getFitness() {
+  float getFitness() {
     if (fitness != -1) return fitness;//if we've already calculated this parameter
     fitness = 0;
     for (int i=0;i<totalNumGenes;i++) {
@@ -55,7 +55,7 @@ class Individual {//an individual stores information for several genes
     boolean mutationOccurred = false;
     for (int i=0;i<totalNumGenes;i++){
       if (random(1)<geneMutationRate){//gene replacement
-        genes[i] = pickRandomGene();
+        genes[i] = pickNearbyGene(genes[i]);
         mutationOccurred = true;
       }
     }
@@ -68,6 +68,12 @@ class Individual {//an individual stores information for several genes
   
   int pickRandomGene(){
     return int(random(256));
+  }
+  
+  int pickNearbyGene(int originalGene){
+    int maxDisplacement = 10;
+    int newGene = originalGene+int(random(2*maxDisplacement))-maxDisplacement;
+    return constrain(newGene, 0, 255);
   }
   
   Individual makeCopy(){

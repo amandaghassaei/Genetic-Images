@@ -6,7 +6,7 @@ class StatsSaver {
   int logSaves;
   int nextLogGenToSave;//extra saves, in case we want to plot in log scale
   int logIncr;
-  String statsFilename = fileName+"_stats.txt";
+  String statsFilename = imgName+"/stats.txt";
   PrintWriter statsOutput;
   
   //caclculate elapsed time - none of this has been lasting more than a day
