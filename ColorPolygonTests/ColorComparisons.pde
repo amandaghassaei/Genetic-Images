@@ -6,7 +6,7 @@ int[] intArrayFromColor(color myColor){
   return colorArray;
 }
 
-float colorDistance(color color1, color color2){//based on CIE76
+float colorDistance(color color1, color color2){
   int[] color1Array = intArrayFromColor(color1);
   int[] color2Array = intArrayFromColor(color2);
   return sqrt(sq(color1Array[0]-color2Array[0]) + sq(color1Array[1]-color2Array[1]) + sq(color1Array[2]-color2Array[2]));
