@@ -80,13 +80,6 @@ class Individual {//an individual stores information for several genes
     return color(random(256), random(256), random(256));
   }
   
-//  int pickNearbyGene(int originalGene){
-//    int maxDisplacement = ;
-//    int max = constrain(originalGene+maxDisplacement,0,256);
-//    int min = constrain(originalGene-maxDisplacement,0,255);
-//    return int(random(min, max));
-//  }
-  
   Individual makeCopy(){
     int[] genesCopy = new int[totalNumGenes];
     arrayCopy(genes, genesCopy);
