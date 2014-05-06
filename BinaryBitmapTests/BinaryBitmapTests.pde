@@ -10,7 +10,7 @@ int totalNumGenes;
 
 int populationSize = 1;//number of individuals in a population (keep this even to keep it simple)
 int generation = 0;//generation number
-int maxGens = 1000000;//manually shut down sketch after we hit this many iterations and still no match (set to 0 to never stop)
+int maxGens = 100000;//manually shut down sketch after we hit this many iterations and still no match (set to 0 to never stop)
 int saveImgAtIncrement = 100;//how often we should save an image for the movie (number of generations)
 
 float geneMutationRate;//change the value of a pixel
@@ -34,9 +34,9 @@ void setup() {
   background(0);
   
   totalNumGenes = imageOrig.width*imageOrig.height;
-  geneMutationRate = 1/float(totalNumGenes);
+  geneMutationRate = 0.01;
   
-  imgName = = "bitmap"+"_pop"+populationSize+"_mut"+geneMutationRate;
+  imgName = "bitmap"+"_pop"+populationSize+"_mut"+geneMutationRate;
   
   population = new Population();
   
