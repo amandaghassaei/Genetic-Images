@@ -8,14 +8,14 @@ PImage imageOrig;//storage for image
 
 int totalNumGenes;
 
-int populationSize = 1;//number of individuals in a population (keep this even to keep it simple)
+int populationSize = 100;//number of individuals in a population (keep this even to keep it simple)
 int generation = 0;//generation number
 int maxGens = 100000;//manually shut down sketch after we hit this many iterations and still no match (set to 0 to never stop)
 int saveImgAtIncrement = 100;//how often we should save an image for the movie (number of generations)
 
 float geneMutationRate;//change the value of a pixel
 float crossoverRate = 1.0;//rate of crossover reproduction vs cloning
-boolean hillClimb = true;
+boolean hillClimb = false;
 
 Population population;
 

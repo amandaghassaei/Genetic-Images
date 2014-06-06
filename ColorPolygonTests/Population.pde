@@ -37,7 +37,7 @@ class Population{
         iterWorstIndividual = iterBestIndividual;//same thing
         nextGeneration[i] = iterBestIndividual;
       }
-    } else {
+    } else {//genetic
       calculateAllFitness(populationList);
       ArrayList<Individual> matingPool = createMatingPool(populationList);
       for (int i=0;i<populationSize;i++){
@@ -82,7 +82,7 @@ class Population{
         background(0);
         fitness = individual.getFitness();
       } else {
-        fitness = individual.getFitness(i/numCols, i%numCols, falseq);
+        fitness = individual.getFitness(i/numCols, i%numCols, false);
       }
       if (fitness>iterBestIndividual.getFitness()){
         iterBestIndividual = individual.copy();
@@ -117,12 +117,13 @@ class Population{
     int poolSize = matingPool.size();
     Individual child;
     Individual parent1 = matingPool.get(int(random(poolSize)));
+    boolean mutateLastGeneOnly = bestIndividualSoFar.genes.length < currentNumGenes;
     if (random(1)<crossoverRate){//crossover
       Individual parent2 = matingPool.get(int(random(poolSize)));
-      if (parent1.getFitness()>parent2.getFitness()) return parent1.crossover(parent2).mutate(false, false);
-      return parent2.crossover(parent1).mutate(false, false);
+      if (parent1.getFitness()>parent2.getFitness()) return parent1.crossover(parent2).mutate(false, mutateLastGeneOnly);
+      return parent2.crossover(parent1).mutate(false, mutateLastGeneOnly);
     } else {//clone
-      return parent1.copy().mutate(false, false);
+      return parent1.copy().mutate(false, mutateLastGeneOnly);
     }
   }
   

@@ -11,7 +11,7 @@ class Gene {//a gene specifies a shape and a color
   
   Gene() {//init random new gene
     corners = new PVector[numCorners];
-    geneColor = color(random(256), random(256), random(256), opacity);//initialize random color
+    geneColor = getRandomColor();//initialize random color
     corners[0] = new PVector(random(image.width), random(image.height));//random initial coordinate
     if (initializeSmallTriangles){
       for (int i=1;i<numCorners;i++){
@@ -65,6 +65,10 @@ class Gene {//a gene specifies a shape and a color
       origColorArray[i] = int(constrain(origColorArray[i] + colorTol*(random(2)-1), 0, 255));
     }
     return colorFromIntArray(origColorArray);
+  }
+  
+  color getRandomColor(){
+    return color(random(256), random(256), random(256), opacity);
   }
   
   Gene copy(){
