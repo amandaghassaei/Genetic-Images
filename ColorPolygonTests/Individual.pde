@@ -93,7 +93,7 @@ class Individual {//an individual stores information for several genes
   
   Individual mutate(boolean forceMutation, boolean lastGeneMut){
     //forceMutation ensures that at least one mutation happens (need this for hill climbing)
-    //lastGeneMut forces a mutation of the last gene only - used when new gene added
+    //lastGeneMut forces a complete mutation of the last gene only - used when new gene added to get a positive addition
     if (genes.length==0) return this;
     boolean mutationHasOccurred = false;
     do {

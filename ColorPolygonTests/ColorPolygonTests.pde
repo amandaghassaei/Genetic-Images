@@ -14,11 +14,11 @@ int numPlateau = 500;//number of generations w/o a new best match before we add 
 boolean initializeSmallTriangles = true;//set to true to initialize each new gene as a very small triangle, this might help to more easily introduce it into the gene pool bc it will affect less pixels
 boolean hillClimb = false;//if you are running this in hill climbing mode, you probably want to set the populationSize variable to 1, otherwise you will hillclimb a population on n individuals in parallel, they will not mix with eachother
 
-int populationSize = 4;//number of individuals in a population
+int populationSize = 25;//number of individuals in a population
 //display options
-boolean renderOneAtATime = true;//ability to render all individuals of a generation at once if false, be careful you don't try to do too much though, it may crash
-int numCols = 2;//for best results, numCols*numRows = populationSize;
-int numRows = 2;
+boolean renderOneAtATime = false;//ability to render all individuals of a generation at once if false, be careful you don't try to do too much though, it may crash
+int numCols = 5;//for best results, numCols*numRows = populationSize;
+int numRows = 5;
 
 //storage globals
 Population population;//storage for individuals

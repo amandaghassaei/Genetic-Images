@@ -108,20 +108,24 @@ class Population{
   }
   
   float adjustedFitnessForThisIter(float fitness) {//individuals are too similar - need to adjust fitness for this iter to promote selection
-    if (iterBestIndividual.getFitness()==0) return 0.0;//no divide by 0
-    if (iterBestIndividual.getFitness()-iterWorstIndividual.getFitness()==0) return 0.0;//no divide by 0
-    return fitness/(iterBestIndividual.getFitness()-iterWorstIndividual.getFitness())*20;//picked an arbitrary val of 20 to scale, change this to increase/decrease range of fitness
+    float bestFitness = iterBestIndividual.getFitness();
+    float worstFitness = iterWorstIndividual.getFitness();
+    if (bestFitness==0) return 0.0;//no divide by 0
+    if ((bestFitness-worstFitness)==0) return 0.0;//no divide by 0
+    float scalingFactor = 20.0;//picked an arbitrary val of 20 to scale, change this to increase/decrease range of fitness
+    float adjustedFitness = (fitness-worstFitness)*scalingFactor/(bestFitness-worstFitness);
+    return adjustedFitness;
   }
   
   Individual reproduce(ArrayList<Individual> matingPool){
     int poolSize = matingPool.size();
     Individual child;
     Individual parent1 = matingPool.get(int(random(poolSize)));
-    boolean mutateLastGeneOnly = bestIndividualSoFar.genes.length < currentNumGenes;
+//    boolean mutateLastGeneOnly = bestIndividualSoFar.genes.length < currentNumGenes;
+    boolean mutateLastGeneOnly = false;
     if (random(1)<crossoverRate){//crossover
       Individual parent2 = matingPool.get(int(random(poolSize)));
-      if (parent1.getFitness()>parent2.getFitness()) return parent1.crossover(parent2).mutate(false, mutateLastGeneOnly);
-      return parent2.crossover(parent1).mutate(false, mutateLastGeneOnly);
+      return parent1.crossover(parent2).mutate(false, mutateLastGeneOnly);
     } else {//clone
       return parent1.copy().mutate(false, mutateLastGeneOnly);
     }
