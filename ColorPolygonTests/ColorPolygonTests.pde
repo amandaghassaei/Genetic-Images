@@ -10,7 +10,7 @@ PImage image;//storage for image
 int currentNumGenes = 0;//starting # genes per individual
 int totalNumGenes = 0;//max number of genes (set to 0 for no max)
 int maxGenerations = 1000000;//manually shut down sketch after we hit this many iterations (set to 0 to never stop searching)
-int numPlateau = 500;//number of generations w/o a new best match before we add another gene into the mix, doesn't matter if currentNumGenes == totalNumGenes
+int numPlateau = 100;//number of generations w/o a new best match before we add another gene into the mix, doesn't matter if currentNumGenes == totalNumGenes
 boolean initializeSmallTriangles = true;//set to true to initialize each new gene as a very small triangle, this might help to more easily introduce it into the gene pool bc it will affect less pixels
 boolean hillClimb = false;//if you are running this in hill climbing mode, you probably want to set the populationSize variable to 1, otherwise you will hillclimb a population on n individuals in parallel, they will not mix with eachother
 

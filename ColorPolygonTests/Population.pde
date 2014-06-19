@@ -112,7 +112,7 @@ class Population{
     float worstFitness = iterWorstIndividual.getFitness();
     if (bestFitness==0) return 0.0;//no divide by 0
     if ((bestFitness-worstFitness)==0) return 0.0;//no divide by 0
-    float scalingFactor = 20.0;//picked an arbitrary val of 20 to scale, change this to increase/decrease range of fitness
+    float scalingFactor = 20.0;//picked an arbitrary val to scale, change this to increase/decrease range of fitness
     float adjustedFitness = (fitness-worstFitness)*scalingFactor/(bestFitness-worstFitness);
     return adjustedFitness;
   }
