@@ -4,6 +4,8 @@ class Population{
   Individual iterBestIndividual;
   Individual iterWorstIndividual;
   
+  boolean tempHillClimb = false;
+  
   int stagGenNum = 0;//number of generations since a child was more fit than parent
   
   //genetic variables
@@ -21,7 +23,7 @@ class Population{
     }
   }
   
-  void iter() {//perform fitness test on all indivduals and create the next generation
+  void iter() {//perform fitness test on all indivduals and creates the next generation
     if (totalNumGenes>currentNumGenes||totalNumGenes==0){
       if (bestIndividualSoFar.genes.length == currentNumGenes){//we need to ensure the last new gene added has been successfully introduced before we add another
         if (stagGenNum++ > numPlateau){
@@ -32,39 +34,84 @@ class Population{
     }
     Individual[] nextGeneration = new Individual[populationSize];
     if (hillClimb){
+      iterBestIndividual.setFitness(0);
+      iterWorstIndividual.setFitness(100);
+      background(0);
       for (int i=0;i<populationSize;i++){
-        iterBestIndividual = hillClimb(populationList[i]);
-        iterWorstIndividual = iterBestIndividual;//same thing
-        nextGeneration[i] = iterBestIndividual;
+        nextGeneration[i] = hillClimb(populationList[i], i/numCols, i%numCols);
+        checkForIterBestAndWorst(nextGeneration[i]);
       }
+      arrayCopy(nextGeneration, populationList);
     } else {//genetic
-      calculateAllFitness(populationList);
-      ArrayList<Individual> matingPool = createMatingPool(populationList);
-      for (int i=0;i<populationSize;i++){
-        nextGeneration[i] = reproduce(matingPool);
+     if (!tempHillClimb){
+        calculateAllFitness(populationList);
+        if (iterBestIndividual.genes.length < currentNumGenes){//if we're adding a new gene
+          tempHillClimb = true;
+//          background(0);
+//          for (int i=0;i<populationSize;i++){
+//            nextGeneration[i] = populationList[i].copy(false);//add new gene
+//            if (nextGeneration[i].getFitness(i/numCols, i%numCols)>iterBestIndividual.getFitness()){
+//              tempHillClimb = false;
+//            }
+//          }
+        } else {
+          ArrayList<Individual> matingPool = createMatingPool(populationList);
+          for (int i=0;i<populationSize;i++){
+            nextGeneration[i] = reproduce(matingPool);
+          }
+          arrayCopy(nextGeneration, populationList);
+        }
+      } else {
+        println("here");
+        background(0);
+        for (int i=0;i<populationSize;i++){
+          nextGeneration[i] = hillClimb(populationList[i], i/numCols, i%numCols);
+          if (nextGeneration[i].getFitness()>iterBestIndividual.getFitness() && nextGeneration[i].genes.length == currentNumGenes){
+            tempHillClimb = false;
+          }
+        }
+        if (!tempHillClimb){//make sure we end with all individuals having the added gene
+          for (int i=0;i<populationSize;i++){
+            if (nextGeneration[i].genes.length < currentNumGenes){
+              nextGeneration[i] = nextGeneration[i].copy(false);
+            }
+          }
+        }
+        arrayCopy(nextGeneration, populationList);
       }
     }
-    arrayCopy(nextGeneration, populationList);
+    
     if (generation==0) {
-      bestIndividualSoFar = iterBestIndividual.copy();
+      bestIndividualSoFar = iterBestIndividual.copy(true);
       bestIndividualSoFar.setFitness(iterBestIndividual.getFitness());
     }
     if (iterBestIndividual.getFitness()>bestIndividualSoFar.getFitness()){
-      bestIndividualSoFar = iterBestIndividual.copy();
+      bestIndividualSoFar = iterBestIndividual.copy(true);
       bestIndividualSoFar.setFitness(iterBestIndividual.getFitness());
       stagGenNum = 0;
     }
   }
   
-  Individual hillClimb(Individual parent){
-      boolean mutateLastGeneOnly;
+  void checkForIterBestAndWorst(Individual individual){
+    float fitness = individual.getFitness();
+    if (fitness>iterBestIndividual.getFitness()){
+      iterBestIndividual = individual.copy(true);
+      iterBestIndividual.setFitness(fitness);
+    }
+    if (fitness<iterWorstIndividual.getFitness()){
+      iterWorstIndividual = individual.copy(true);
+      iterWorstIndividual.setFitness(fitness);
+    }
+  }
+  
+  Individual hillClimb(Individual parent, int row, int col){
+      Individual mutant;
       if (currentNumGenes>parent.genes.length){
-        mutateLastGeneOnly = true;
+        mutant = parent.copy(false);
       } else {
-        mutateLastGeneOnly = false;
+        mutant = parent.copy(false).mutate(true);
       }
-      Individual mutant = parent.copy().mutate(true, mutateLastGeneOnly);
-      if (mutant.getFitness(0,0,true)>parent.getFitness(0,0,true)){
+      if (mutant.getFitness(row,col)>parent.getFitness()){
         stagGenNum = 0;
         return mutant;
       }
@@ -76,22 +123,12 @@ class Population{
     iterWorstIndividual.setFitness(100);
     background(0);//clear current image
     for (int i=0;i<populationSize;i++) {
-      Individual individual = currentPopulation[i];
-      float fitness;
       if (renderOneAtATime){
-        background(0);
-        fitness = individual.getFitness();
+        currentPopulation[i].getFitness();
       } else {
-        fitness = individual.getFitness(i/numCols, i%numCols, false);
+        currentPopulation[i].getFitness(i/numCols, i%numCols);
       }
-      if (fitness>iterBestIndividual.getFitness()){
-        iterBestIndividual = individual.copy();
-        iterBestIndividual.setFitness(fitness);
-      }
-      if (fitness<iterWorstIndividual.getFitness()){
-        iterWorstIndividual = individual.copy();
-        iterWorstIndividual.setFitness(fitness);
-      }
+      checkForIterBestAndWorst(currentPopulation[i]);
     }
   }
   
@@ -121,13 +158,11 @@ class Population{
     int poolSize = matingPool.size();
     Individual child;
     Individual parent1 = matingPool.get(int(random(poolSize)));
-//    boolean mutateLastGeneOnly = bestIndividualSoFar.genes.length < currentNumGenes;
-    boolean mutateLastGeneOnly = false;
     if (random(1)<crossoverRate){//crossover
       Individual parent2 = matingPool.get(int(random(poolSize)));
-      return parent1.crossover(parent2).mutate(false, mutateLastGeneOnly);
+      return parent1.crossover(parent2).mutate(false);
     } else {//clone
-      return parent1.copy().mutate(false, mutateLastGeneOnly);
+      return parent1.copy(false).mutate(false);
     }
   }
   

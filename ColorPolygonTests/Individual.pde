@@ -10,17 +10,24 @@ class Individual {//an individual stores information for several genes
     }
   }
   
-  Individual(Gene[] initialGenes, boolean empty) {//empty flag is how we calculate worstPossibleIndividual, forces init of Individual with no genes
+  Individual(Gene[] initialGenes, boolean empty, boolean exactCopy){// empty is how we calculate worstPossibleIndividual, forces init of Individual with no genes
     if (empty) {
       genes = new Gene[0];
       return;
     }
-    genes = new Gene[currentNumGenes];
-    for (int i=0;i<currentNumGenes;i++){
-      if (i>=initialGenes.length){
-        genes[i] = new Gene();
-      } else {
+    if (exactCopy){
+      genes = new Gene[initialGenes.length];
+      for (int i=0;i<initialGenes.length;i++){
         genes[i] = initialGenes[i].copy();
+      }
+    } else {
+      genes = new Gene[currentNumGenes];
+      for (int i=0;i<currentNumGenes;i++){
+        if (i>=initialGenes.length){
+          genes[i] = new Gene();
+        } else {
+          genes[i] = initialGenes[i].copy();
+        }
       }
     }
   }
@@ -38,15 +45,14 @@ class Individual {//an individual stores information for several genes
     if (fitness!=-1) {
       return fitness;//don't calculate fitness twice
     }
-    background(0);
-    return getFitness(0,0, true);    
+    return getFitness(0,0);    
   }
   
-  float getFitness(int row, int col, boolean clearBackground) {//used to render individual at a particular point on the grid
+  float getFitness(int row, int col) {//used to render individual at a particular point on the grid
     if (fitness!=-1) {
       return fitness;//don't calculate fitness twice
     }
-    if (clearBackground) background(0);
+    if (renderOneAtATime) background(0);
     render(row, col);
     float scaledFitness = scaleFitness(calculateRawFitness(row, col));
     fitness = scaledFitness;
@@ -75,41 +81,33 @@ class Individual {//an individual stores information for several genes
   }
   
   Individual crossover(Individual mate){
-    Gene[] childGenes = new Gene[currentNumGenes];
+    Gene[] childGenes = new Gene[mate.genes.length];
     int crossoverPoint = int(random(genes.length));
-    for (int i=0;i<currentNumGenes;i++){
+    for (int i=0;i<mate.genes.length;i++){
       if (i<=crossoverPoint && genes.length>i){//single point crossover
         childGenes[i] = genes[i].copy();
       } else {
-        if (i<mate.genes.length){
-          childGenes[i] = mate.genes[i].copy();
-        } else {
-          childGenes[i] = new Gene();
-        }
+        childGenes[i] = mate.genes[i].copy();
       }
     }
-    return new Individual(childGenes, false);
+    return new Individual(childGenes, false, false);
   }
   
-  Individual mutate(boolean forceMutation, boolean lastGeneMut){
+  Individual mutate(boolean forceMutation){
     //forceMutation ensures that at least one mutation happens (need this for hill climbing)
     //lastGeneMut forces a complete mutation of the last gene only - used when new gene added to get a positive addition
     if (genes.length==0) return this;
     boolean mutationHasOccurred = false;
     do {
-      if (lastGeneMut) {
-        mutationHasOccurred = genes[genes.length-1].mutate();
-      } else {
-        for (Gene gene : genes){
-           boolean mutation = gene.mutate();
-           if (mutation) mutationHasOccurred = true;
-        }
+      for (Gene gene : genes){
+         boolean mutation = gene.mutate();
+         if (mutation) mutationHasOccurred = true;
       }
     } while (!mutationHasOccurred && forceMutation);
     return this;
   }
   
-  Individual copy(){
-    return new Individual(genes, false);
+  Individual copy(boolean exactCopy){
+    return new Individual(genes, false, exactCopy);
   }
 }
